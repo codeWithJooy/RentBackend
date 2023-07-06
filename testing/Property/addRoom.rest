@@ -1,0 +1,11 @@
+POST http://localhost:5000/api/floor/addRoom
+Content-Type:application/json
+
+{
+    "userId":"6499b724858d17fd0932e019",
+    "propertyId":"6499b87c7c3f6394938dde4a",
+    "floorName":"Ground Floor",
+    "single":2,
+    "double":3,
+    "triple":4
+}
