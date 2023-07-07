@@ -1,4 +1,5 @@
 const User = require("../models/user");
+const PropertyDetails = require("../models/property");
 
 const Signup = (req, res) => {
   const { first, last, email, password } = req.body;
@@ -42,7 +43,25 @@ const Login = (req, res) => {
           message: "Password Mismatch",
         });
       }
-      res.json({ code: 200, message: "Login Successfull" });
+      if (user.password === password) {
+        PropertyDetails.findOne({ userId: user._id }).then((property) => {
+          if (!property) {
+            return res.json({
+              code: 200,
+              userId: user._id,
+              propertyId: "",
+              propertyName: "",
+            });
+          } else {
+            return res.json({
+              code: 200,
+              userId: property.userId,
+              propertyId: property._id,
+              propertyName: property.name,
+            });
+          }
+        });
+      }
     })
     .catch((error) =>
       res.status(500).json({ code: 502, message: "Internal Server Error" })

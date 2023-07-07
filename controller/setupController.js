@@ -28,14 +28,14 @@ const addFloor = (req, res) => {
       arr.push({
         name: "Ground Floor",
         roomsAdded: false,
-        roomsType: {},
+        roomsType: { single: 0, double: 0, triple: 0 },
         rooms: [],
       });
     } else {
       arr.push({
         name: "Floor " + i,
         roomsAdded: false,
-        roomsType: {},
+        roomsType: { single: 0, double: 0, triple: 0 },
         rooms: [],
       });
     }
@@ -50,9 +50,22 @@ const addFloor = (req, res) => {
   floorAdd
     .save()
     .then(() => res.json({ code: 200 }))
-    .catch((err) => res.status(400).json({ code: 400 }));
+    .catch((err) => res.json({ code: 500 }));
 };
+const getFloorPresent = (req, res) => {
+  const { userId, propertyId } = req.body;
+  let user = new mongoose.Types.ObjectId(userId);
+  let property = new mongoose.Types.ObjectId(propertyId);
 
+  Floor.findOne({ userId: user, propertyId: property })
+    .then((unit) => {
+      if (!unit) {
+        return res.json({ code: 200, floorPresent: false });
+      }
+      return res.json({ code: 200, floorPresent: unit.floorPresent });
+    })
+    .catch((error) => res.status(500));
+};
 const addRoom = async (req, res) => {
   const { userId, propertyId, floorName, single, double, triple } = req.body;
 
@@ -88,8 +101,24 @@ const addRoom = async (req, res) => {
       res.status(404).json({ code: 404, message: "Document Not Found" });
     });
 };
+const getFloors = (req, res) => {
+  const { userId, propertyId } = req.query;
+  Floor.findOne({ userId, propertyId })
+    .then((floor) => {
+      if (!floor) {
+        return res.json({ code: 404 });
+      }
+      res.json({ code: 200, model: floor.floors });
+    })
+    .catch((error) => {
+      console.log(error);
+      return res.json({ code: 404 });
+    });
+};
 module.exports = {
   addProperty,
   addFloor,
   addRoom,
+  getFloorPresent,
+  getFloors,
 };
