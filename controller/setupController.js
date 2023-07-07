@@ -73,7 +73,7 @@ const addRoom = async (req, res) => {
   let user = new mongoose.Types.ObjectId(userId);
   let documentId = null;
 
-  Floor.findOne({ userId: new mongoose.Types.ObjectId(userId) })
+  Floor.findOne({ userId: userId, propertyId: propertyId })
     .then((document) => {
       if (!document) {
         console.log("Document Not Found");
@@ -88,6 +88,11 @@ const addRoom = async (req, res) => {
       }
 
       document.floors[floorIndex].roomsAdded = true;
+      document.floors[floorIndex].roomsType = {
+        single: single,
+        double: double,
+        triple: triple,
+      };
       document.floors[floorIndex].rooms = [
         { single: single },
         { double: double },
