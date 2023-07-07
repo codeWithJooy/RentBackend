@@ -1,0 +1,1 @@
+	GET http://localhost:5000/api/room/getRooms?userId=64a53bb326198a25e67fc945&floorName=Ground Floor
