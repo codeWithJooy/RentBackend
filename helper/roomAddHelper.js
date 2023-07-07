@@ -1,3 +1,5 @@
+const { v4: uuidv4 } = require("uuid");
+
 const roomAddHelper = (floorName, roomTypes) => {
   const arr = [];
   let counter = 1;
@@ -10,6 +12,7 @@ const roomAddHelper = (floorName, roomTypes) => {
         room.status = "Vacant";
         room.type = "Single";
         room.rate = 0;
+        room.id = uuidv4();
         counter = counter + 1;
         arr.push(room);
       }
@@ -22,6 +25,7 @@ const roomAddHelper = (floorName, roomTypes) => {
         room.status = "Vacant";
         room.type = "Single";
         room.rate = 0;
+        room.id = uuidv4();
         arr.push(room);
         counter = counter + 1;
       }
@@ -36,6 +40,7 @@ const roomAddHelper = (floorName, roomTypes) => {
         room.status = "Vacant";
         room.type = "Double";
         room.rate = 0;
+        room.id = uuidv4();
         arr.push(room);
         counter = counter + 1;
       }
@@ -48,6 +53,7 @@ const roomAddHelper = (floorName, roomTypes) => {
         room.status = "Vacant";
         room.type = "Double";
         room.rate = 0;
+        room.id = uuidv4();
         arr.push(room);
         counter = counter + 1;
       }
@@ -62,6 +68,7 @@ const roomAddHelper = (floorName, roomTypes) => {
         room.status = "Vacant";
         room.type = "Triple";
         room.rate = 0;
+        room.id = uuidv4();
         arr.push(room);
         counter = counter + 1;
       }
@@ -74,6 +81,7 @@ const roomAddHelper = (floorName, roomTypes) => {
         room.status = "Vacant";
         room.type = "Triple";
         room.rate = 0;
+        room.id = uuidv4();
         arr.push(room);
         counter = counter + 1;
       }
