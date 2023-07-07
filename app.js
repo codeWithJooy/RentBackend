@@ -12,5 +12,4 @@ app.use("/api/auth", authRoutes);
 app.use("/api/setup", setupRoutes);
 app.use("/api/floor", floorRoutes);
 app.use("/api/room", roomRoutes);
-
 module.exports = app;

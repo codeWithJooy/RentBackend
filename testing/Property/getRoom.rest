@@ -1,1 +1,1 @@
-	GET http://localhost:5000/api/room/getRooms?userId=64a53bb326198a25e67fc945&floorName=Ground Floor
+	GET http://localhost:5000/api/room/getRooms?userId=64a53bb326198a25e67fc945&propertyId=64a694ee5bc268b1517feb21&floorName=Ground Floor

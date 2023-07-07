@@ -3,5 +3,5 @@ const router = express.Router();
 const roomControllers = require("../controller/roomController");
 
 router.get("/getRooms", roomControllers.getRooms);
-
+router.get("/getSingleRoom", roomControllers.getSingleRoom);
 module.exports = router;

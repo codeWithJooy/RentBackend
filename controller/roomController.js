@@ -22,6 +22,22 @@ const getRooms = (req, res) => {
       res.json({ code: 502 });
     });
 };
+const getSingleRoom = (req, res) => {
+  const { userId, propertyId, floorName, roomName } = req.query;
+  Rooms.findOne({ userId, propertyId, floorName })
+    .then((doc) => {
+      if (!doc) {
+        return res.json({ code: 404 });
+      }
+      const room = doc.rooms.find((room) => room.name == roomName);
+      if (!room) {
+        return res.json({ code: 404 });
+      }
+      return res.json({ code: 200, model: room });
+    })
+    .catch((error) => res.json({ code: 502 }));
+};
 module.exports = {
   getRooms,
+  getSingleRoom,
 };
