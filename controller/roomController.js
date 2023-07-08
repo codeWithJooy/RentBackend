@@ -22,6 +22,24 @@ const getRooms = (req, res) => {
       res.json({ code: 502 });
     });
 };
+const getAllRooms = (req, res) => {
+  const { userId, propertyId } = req.query;
+  Rooms.findOne({
+    userId: userId,
+    propertyId: propertyId,
+  })
+    .then((room) => {
+      if (!room) {
+        return res.json({ code: 404 });
+      } else {
+        return res.json({ code: 200, model: room.rooms });
+      }
+    })
+    .catch((err) => {
+      console.log(err);
+      res.json({ code: 502 });
+    });
+};
 const getSingleRoom = (req, res) => {
   const { userId, propertyId, floorName, roomName } = req.query;
   Rooms.findOne({ userId, propertyId, floorName })
@@ -66,4 +84,5 @@ module.exports = {
   getRooms,
   getSingleRoom,
   updateRoom,
+  getAllRooms,
 };

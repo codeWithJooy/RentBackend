@@ -4,6 +4,7 @@ const authRoutes = require("./routes/authRoutes");
 const setupRoutes = require("./routes/setupRoutes");
 const floorRoutes = require("./routes/floorRoutes");
 const roomRoutes = require("./routes/roomRoutes");
+const tenantRoutes = require("./routes/tenantRoutes");
 
 const app = express();
 app.use(express.json());
@@ -12,4 +13,5 @@ app.use("/api/auth", authRoutes);
 app.use("/api/setup", setupRoutes);
 app.use("/api/floor", floorRoutes);
 app.use("/api/room", roomRoutes);
+app.use("/api/tenant", tenantRoutes);
 module.exports = app;
