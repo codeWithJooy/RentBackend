@@ -37,7 +37,33 @@ const getSingleRoom = (req, res) => {
     })
     .catch((error) => res.json({ code: 502 }));
 };
+const updateRoom = (req, res) => {
+  const { userId, propertyId, floorName, id } = req.query;
+  const { name, rate } = req.body;
+
+  Rooms.findOne({ userId, propertyId, floorName })
+    .then((doc) => {
+      if (!doc) {
+        return res.json({ code: 404, message: "Room DB Empty" });
+      } else {
+        const roomIndex = doc.rooms.findIndex((room) => room.id == id);
+        if (roomIndex === -1) {
+          return res.json({ code: 404, message: "Room Not Found" });
+        } else {
+          doc.rooms[roomIndex].name = name;
+          doc.rooms[roomIndex].rate = rate;
+          doc.markModified("rooms");
+          doc.save();
+          return res.json({ code: 200, message: "Update Successfull" });
+        }
+      }
+    })
+    .catch((err) => {
+      return res.json({ code: 502, message: err.message });
+    });
+};
 module.exports = {
   getRooms,
   getSingleRoom,
+  updateRoom,
 };
