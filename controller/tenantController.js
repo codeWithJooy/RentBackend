@@ -41,6 +41,7 @@ const getTenants = (req, res) => {
       return res.json({ code: 502 });
     });
 };
+const getDuesTenant = () => {};
 module.exports = {
   getTenants,
   addTenant,
