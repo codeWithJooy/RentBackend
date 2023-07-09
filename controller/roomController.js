@@ -24,15 +24,17 @@ const getRooms = (req, res) => {
 };
 const getAllRooms = (req, res) => {
   const { userId, propertyId } = req.query;
-  Rooms.findOne({
-    userId: userId,
-    propertyId: propertyId,
-  })
-    .then((room) => {
-      if (!room) {
-        return res.json({ code: 404 });
+  Rooms.find({ userId, propertyId })
+    .exec()
+    .then((rooms) => {
+      // Extract all rooms from the floors
+      const allRooms = rooms.reduce((acc, curr) => [...acc, ...curr.rooms], []);
+
+      // Check if any rooms are present
+      if (allRooms.length === 0) {
+        res.json({ code: 200, model: [] });
       } else {
-        return res.json({ code: 200, model: room.rooms });
+        res.json({ code: 200, model: allRooms });
       }
     })
     .catch((err) => {

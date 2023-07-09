@@ -103,26 +103,28 @@ const addRoom = async (req, res) => {
       document.markModified("floors");
       document.save();
       //res.json({ code: 200, message: "Rooms Added" });
-      Rooms.findOne({ userId: userId, propertyId: propertyId }).then((room) => {
-        if (!room) {
-          let roomTypes = {
-            single: single,
-            double: double,
-            triple: triple,
-          };
-          const arr = roomAddHelper(floorName, roomTypes);
-          const roomAdd = new Rooms({
-            userId,
-            propertyId,
-            floorName,
-            roomPresent: true,
-            rooms: arr,
-          });
-          roomAdd
-            .save()
-            .then(() => res.json({ code: 200, message: "Rooms Added" }));
+      Rooms.findOne({ userId: userId, propertyId: propertyId, floorName }).then(
+        (room) => {
+          if (!room) {
+            let roomTypes = {
+              single: single,
+              double: double,
+              triple: triple,
+            };
+            const arr = roomAddHelper(floorName, roomTypes);
+            const roomAdd = new Rooms({
+              userId,
+              propertyId,
+              floorName,
+              roomPresent: true,
+              rooms: arr,
+            });
+            roomAdd
+              .save()
+              .then(() => res.json({ code: 200, message: "Rooms Added" }));
+          }
         }
-      });
+      );
     })
     .catch((error) => {
       res.status(404).json({ code: 404, message: "Document Not Found" });
