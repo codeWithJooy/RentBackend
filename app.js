@@ -5,6 +5,7 @@ const setupRoutes = require("./routes/setupRoutes");
 const floorRoutes = require("./routes/floorRoutes");
 const roomRoutes = require("./routes/roomRoutes");
 const tenantRoutes = require("./routes/tenantRoutes");
+const expenseRoutes = require("./routes/expenseRoutes");
 
 const app = express();
 app.use(express.json());
@@ -14,4 +15,6 @@ app.use("/api/setup", setupRoutes);
 app.use("/api/floor", floorRoutes);
 app.use("/api/room", roomRoutes);
 app.use("/api/tenant", tenantRoutes);
+app.use("/api/expense", expenseRoutes);
+
 module.exports = app;
