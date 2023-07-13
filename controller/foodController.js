@@ -28,7 +28,7 @@ const activateFood = (req, res) => {
               end: "18:00",
             },
             {
-              title: "Breakfast",
+              title: "Dinner",
               start: "20:00",
               end: "22:00",
             },
@@ -56,7 +56,7 @@ const activateFood = (req, res) => {
               dinner: "",
             },
             {
-              title: "Thusday",
+              title: "Thursday",
               breakfast: "",
               lunch: "",
               snacks: "",
@@ -112,7 +112,7 @@ const updateFood = (req, res) => {
   Food.findOne({ userId, propertyId })
     .then((food) => {
       if (!food) {
-        return res.json({ cod: 404 });
+        return res.json({ code: 404 });
       } else {
         const foodIndex = food.days.findIndex((food) => food.title == title);
         if (foodIndex == -1) {

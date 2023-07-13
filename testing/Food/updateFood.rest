@@ -1,8 +1,8 @@
-PUT http://localhost:5000/api/food/updateFood?userId=6499b724858d17fd0932e019&propertyId=6499b87c7c3f6394938dde4a
+PUT http://localhost:5000/api/food/updateFood?userId=64aa2d2c2ba94384ea3d0fb0&propertyId=64aa43b294501460f5e68341
 Content-Type:application/json
 
 {
-    "title":"Sunday",
+    "title":"Monday",
     "breakfast":"Chole Bhature",
     "lunch":"Rice,Dal,Paneer Pasanda,Raita,Chutney",
     "snacks":"Tea Biscuits",
