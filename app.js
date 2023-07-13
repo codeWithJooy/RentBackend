@@ -6,6 +6,7 @@ const floorRoutes = require("./routes/floorRoutes");
 const roomRoutes = require("./routes/roomRoutes");
 const tenantRoutes = require("./routes/tenantRoutes");
 const expenseRoutes = require("./routes/expenseRoutes");
+const foodRoutes = require("./routes/foodRoutes");
 
 const app = express();
 app.use(express.json());
@@ -16,5 +17,6 @@ app.use("/api/floor", floorRoutes);
 app.use("/api/room", roomRoutes);
 app.use("/api/tenant", tenantRoutes);
 app.use("/api/expense", expenseRoutes);
+app.use("/api/food", foodRoutes);
 
 module.exports = app;
