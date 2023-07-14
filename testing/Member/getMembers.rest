@@ -1,0 +1,1 @@
+GET http://localhost:5000/api/member/getMembers?userId=6499b724858d17fd0932e019&propertyId=6499b87c7c3f6394938dde4a
