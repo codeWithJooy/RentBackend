@@ -1,9 +1,9 @@
-POST http://localhost:5000/api/member/addMember?userId=6499b724858d17fd0932e019&propertyId=6499b87c7c3f6394938dde4a
+POST http://localhost:5000/api/member/addMember?userId=64aa2d2c2ba94384ea3d0fb0&propertyId=64aa43b294501460f5e68341
 Content-Type:application/json
 
 {
-    "name":"Abhishek",
+    "name":"Owner",
     "phone":"9007453397",
-    "doj":"14-07-2023",
-    "designation":"Partner"
+    "doj":"15-07-2023",
+    "designation":"Admin"
 }
