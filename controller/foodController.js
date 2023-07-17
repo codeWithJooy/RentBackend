@@ -106,6 +106,7 @@ const getActivated = (req, res) => {
       return res.json({ code: 502, model: err.message });
     });
 };
+const updateTime = (req, res) => {};
 const updateFood = (req, res) => {
   const { userId, propertyId } = req.query;
   const { title, breakfast, lunch, snacks, dinner } = req.body;

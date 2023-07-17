@@ -1,0 +1,1 @@
+GET http://localhost:5000/api/tenant/getATenant?userId=64aa2d2c2ba94384ea3d0fb0&propertyId=64aa43b294501460f5e68341&tenantId=64b39af1be95c08c77ae1c54

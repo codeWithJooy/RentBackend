@@ -1,8 +1,9 @@
 const mongoose = require("mongoose");
 const Tenant = require("../models/tenant");
-
+const Collection = require("../models/collection");
 const addTenant = (req, res) => {
-  const { userId, propertyId, roomId, name, number, doj, dues } = req.body;
+  const { userId, propertyId, roomId, name, number, doj, dues, collections } =
+    req.body;
   Tenant.findOne({ userId, propertyId, number })
     .then((tenant) => {
       if (tenant) {
@@ -20,9 +21,24 @@ const addTenant = (req, res) => {
       newTenant
         .save()
         .then(() => {
-          return res.json({ code: 200 });
+          const newColllection = new Collection({
+            userId,
+            propertyId,
+            tenantId: newTenant._id,
+            collections: collections,
+          });
+          newColllection
+            .save()
+            .then(() => {
+              return res.json({ code: 200 });
+            })
+            .catch((err) => {
+              return res.json({ code: 502, model: err.message });
+            });
         })
-        .catch((error) => res.json({ code: 502 }));
+        .catch((error) => {
+          return res.json({ code: 502 });
+        });
     })
     .catch((error) => {
       return res.json({ code: 502 });
@@ -41,8 +57,22 @@ const getTenants = (req, res) => {
       return res.json({ code: 502 });
     });
 };
+const getATenant = (req, res) => {
+  const { userId, propertyId, tenantId } = req.query;
+  Tenant.findOne({ userId, propertyId, _id: tenantId })
+    .then((tenant) => {
+      if (!tenant) {
+        return res.json({ code: 404, mode: "No Tenant Found" });
+      }
+      return res.json({ code: 200, model: tenant });
+    })
+    .catch((error) => {
+      return res.json({ code: 502, model: error.message });
+    });
+};
 const getDuesTenant = () => {};
 module.exports = {
   getTenants,
   addTenant,
+  getATenant,
 };

@@ -4,4 +4,5 @@ const tenantControllers = require("../controller/tenantController");
 
 router.get("/getTenants", tenantControllers.getTenants);
 router.post("/addTenant", tenantControllers.addTenant);
+router.get("/getATenant", tenantControllers.getATenant);
 module.exports = router;

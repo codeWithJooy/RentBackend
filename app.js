@@ -8,6 +8,7 @@ const tenantRoutes = require("./routes/tenantRoutes");
 const expenseRoutes = require("./routes/expenseRoutes");
 const foodRoutes = require("./routes/foodRoutes");
 const memberRoutes = require("./routes/memberRoutes");
+const collectionRoutes = require("./routes/collectionRoutes");
 
 const app = express();
 app.use(express.json());
@@ -20,4 +21,5 @@ app.use("/api/tenant", tenantRoutes);
 app.use("/api/expense", expenseRoutes);
 app.use("/api/food", foodRoutes);
 app.use("/api/member", memberRoutes);
+app.use("/api/collection", collectionRoutes);
 module.exports = app;
