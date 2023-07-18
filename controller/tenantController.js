@@ -1,9 +1,20 @@
 const mongoose = require("mongoose");
 const Tenant = require("../models/tenant");
 const Collection = require("../models/collection");
+const Discount = require("../models/discount");
+
 const addTenant = (req, res) => {
-  const { userId, propertyId, roomId, name, number, doj, dues, collections } =
-    req.body;
+  const {
+    userId,
+    propertyId,
+    roomId,
+    name,
+    number,
+    dob,
+    dues,
+    collections,
+    discounts,
+  } = req.body;
   Tenant.findOne({ userId, propertyId, number })
     .then((tenant) => {
       if (tenant) {
@@ -15,7 +26,7 @@ const addTenant = (req, res) => {
         roomId,
         name,
         number,
-        doj,
+        dob,
         dues,
       });
       newTenant
@@ -30,18 +41,31 @@ const addTenant = (req, res) => {
           newColllection
             .save()
             .then(() => {
-              return res.json({ code: 200 });
+              const newDiscount = new Discount({
+                userId,
+                propertyId,
+                tenantId: newTenant._id,
+                discounts: discounts,
+              });
+              newDiscount
+                .save()
+                .then(() => {
+                  return res.json({ code: 200 });
+                })
+                .catch((err) => {
+                  return res.json({ code: 502, model: err.message });
+                });
             })
             .catch((err) => {
               return res.json({ code: 502, model: err.message });
             });
         })
         .catch((error) => {
-          return res.json({ code: 502 });
+          return res.json({ code: 502, model: error.message });
         });
     })
     .catch((error) => {
-      return res.json({ code: 502 });
+      return res.json({ code: 502, model: error.message });
     });
 };
 const getTenants = (req, res) => {

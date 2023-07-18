@@ -24,7 +24,7 @@ const tenantSchema = new mongoose.Schema(
       required: true,
       trim: true,
     },
-    doj: {
+    dob: {
       type: String,
       required: true,
     },
