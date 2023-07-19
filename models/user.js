@@ -22,6 +22,10 @@ const userSchema = new mongoose.Schema(
       required: true,
       trim: true,
     },
+    lastVisit: {
+      type: String,
+      trim: true,
+    },
   },
   {
     timestamps: true,

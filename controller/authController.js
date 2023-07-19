@@ -1,4 +1,5 @@
 const User = require("../models/user");
+const moment = require("moment");
 const PropertyDetails = require("../models/property");
 
 const Signup = (req, res) => {
@@ -10,7 +11,10 @@ const Signup = (req, res) => {
           .status(200)
           .json({ code: 409, message: "User Already Present" });
       }
-      const newUser = new User({ first, last, email, password });
+      const lastVisit = moment(new Date()).format(
+        "dddd, MMMM Do YYYY, h:mm:ss a"
+      );
+      const newUser = new User({ first, last, email, password, lastVisit });
 
       newUser
         .save()
@@ -44,6 +48,11 @@ const Login = (req, res) => {
         });
       }
       if (user.password === password) {
+        user.lastVisit = moment(new Date()).format(
+          "dddd, MMMM Do YYYY, h:mm:ss a"
+        );
+        user.markModified("lastVisit");
+        user.save();
         PropertyDetails.findOne({ userId: user._id }).then((property) => {
           if (!property) {
             return res.json({
