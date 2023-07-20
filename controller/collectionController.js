@@ -1,6 +1,7 @@
 const mongoose = require("mongoose");
 const Collection = require("../models/collection");
 const Discount = require("../models/discount");
+const Receipt = require("../models/receipt");
 
 const addCollection = (req, res) => {
   const { userId, propertyId, tenantId } = req.query;
@@ -152,6 +153,57 @@ const getAllDiscounts = (req, res) => {
       return res.json({ code: 502, model: err.message });
     });
 };
+const getReceiptId = (req, res) => {
+  const { userId, propertyId, propertyName, type, date } = req.body;
+  let rgx = new RegExp(/(\p{L}{1})\p{L}+/, "gu");
+  let propertyInitials = [...propertyName.matchAll(rgx)] || [];
+  let initials = [...type.matchAll(rgx)] || [];
+  let dueType = (
+    (initials.shift()?.[1] || "") + (initials.pop()?.[1] || "")
+  ).toUpperCase();
+  propertyName = (
+    (propertyInitials.shift()?.[1] || "") + (propertyInitials.pop()?.[1] || "")
+  ).toUpperCase();
+
+  let newDate = new Date(date);
+  let month = months[newDate.getMonth()];
+  let year = newDate.getFullYear();
+
+  Receipt.findOne({ userId, propertyId, dueType, month, year })
+    .then((receipt) => {
+      if (!receipt) {
+        let newReceiptVal =
+          propertyName + "/" + dueType + "/" + month + "/" + year + "/1";
+        const newReceipt = new Receipt({
+          userId,
+          propertyId,
+          dueType,
+          month,
+          year,
+          newReceiptVal,
+        });
+        newReceipt
+          .save()
+          .then(() => res.json({ code: 200, model: newReceiptVal }))
+          .catch((error) => {
+            return res.json({ code: 502, model: error.message });
+          });
+      } else {
+        let arr = receipt.count.strip("/");
+        let count = parseInt(arr[4]);
+        count = count + 1;
+        arr[4] = count;
+        let newReceipt = arr.join("/");
+        receipt.count = newReceipt;
+        receipt.markModified("count");
+        receipt.save();
+        return res.json({ code: 200, model: newReceipt });
+      }
+    })
+    .catch((error) => {
+      res.json({ code: 502, model: error.message });
+    });
+};
 module.exports = {
   addCollection,
   getCollection,
@@ -159,4 +211,5 @@ module.exports = {
   addDiscount,
   getDiscount,
   getAllDiscounts,
+  getReceiptId,
 };

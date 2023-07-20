@@ -3,8 +3,6 @@ const Rooms = require("../models/rooms");
 
 const getRooms = (req, res) => {
   const { userId, propertyId, floorName } = req.query;
-  console.log(floorName);
-  console.log("Ground Floor");
   Rooms.findOne({
     userId: userId,
     propertyId: propertyId,
@@ -82,9 +80,30 @@ const updateRoom = (req, res) => {
       return res.json({ code: 502, message: err.message });
     });
 };
+const getRoomName = (req, res) => {
+  const { userId, propertyId, roomId } = req.query;
+
+  Rooms.find({ userId, propertyId })
+    .exec()
+    .then((rooms) => {
+      // Extract all rooms from the floors
+      const allRooms = rooms.reduce((acc, curr) => [...acc, ...curr.rooms], []);
+      const room = allRooms.filter((item) => item.id == roomId);
+      if (!room) {
+        res.json({ code: 200, model: "Unknown" });
+      } else {
+        res.json({ code: 200, model: room[0].name });
+      }
+    })
+    .catch((err) => {
+      console.log(err);
+      res.json({ code: 502 });
+    });
+};
 module.exports = {
   getRooms,
   getSingleRoom,
   updateRoom,
   getAllRooms,
+  getRoomName,
 };
