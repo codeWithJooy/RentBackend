@@ -19,8 +19,9 @@ const months = [
 ];
 const addCollection = (req, res) => {
   const { userId, propertyId, tenantId } = req.query;
-  const { type, amount, date, mode, discount, receiptId } = req.body;
-  let obj = { type, amount, date, mode, receiptId };
+  const { type, amount, date, mode, discount, receiptId, openingDue } =
+    req.body;
+  let obj = { type, amount, date, mode, receiptId, openingDue };
   let discountObj = { type, amount: discount, date };
   //Update Tenant
   Tenant.findOne({ userId, propertyId, _id: tenantId })
@@ -286,6 +287,7 @@ const getReceiptData = (req, res) => {
   let date = "";
   let type = "";
   let balance = "";
+  let due = "";
   Collection.findOne({ userId, propertyId, tenantId })
     .then((collection) => {
       let collectionIndex = collection.collections.findIndex(
@@ -296,6 +298,7 @@ const getReceiptData = (req, res) => {
       mode = collection.collections[collectionIndex].mode;
       date = collection.collections[collectionIndex].date;
       type = collection.collections[collectionIndex].type;
+      due = collection.collections[collectionIndex].openingDue;
       Tenant.findOne({ _id: tenantId })
         .then((tenant) => {
           tenantName = tenant.name;
@@ -317,6 +320,7 @@ const getReceiptData = (req, res) => {
             date,
             type,
             balance: balance,
+            due,
           };
 
           return res.json({ code: 200, model: obj });
