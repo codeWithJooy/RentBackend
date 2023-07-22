@@ -2,9 +2,10 @@ const mongoose = require("mongoose");
 const Tenant = require("../models/tenant");
 const Collection = require("../models/collection");
 const Discount = require("../models/discount");
+const Receipt = require("../models/receipt");
 
 const addTenant = (req, res) => {
-  const {
+  let {
     userId,
     propertyId,
     roomId,
@@ -50,6 +51,33 @@ const addTenant = (req, res) => {
               newDiscount
                 .save()
                 .then(() => {
+                  for (let i = 0; i < collections.length; i++) {
+                    let arr = collections[i].receiptId.split("/");
+
+                    Receipt.findOne({
+                      userId,
+                      propertyId,
+                      dueType: arr[1],
+                      month: arr[2],
+                      year: arr[3],
+                    }).then((receipt) => {
+                      if (receipt) {
+                        receipt.count = collections[i].receiptId;
+                        receipt.markModified("count");
+                        receipt.save();
+                      } else {
+                        const newRece = new Receipt({
+                          userId,
+                          propertyId,
+                          dueType: arr[1],
+                          month: arr[2],
+                          year: arr[3],
+                          count: collections[i].receiptId,
+                        });
+                        newRece.save();
+                      }
+                    });
+                  }
                   return res.json({ code: 200 });
                 })
                 .catch((err) => {
@@ -94,9 +122,28 @@ const getATenant = (req, res) => {
       return res.json({ code: 502, model: error.message });
     });
 };
+const getTenantCount = (req, res) => {
+  const { userId, propertyId, roomId } = req.query;
+  let obj = {};
+  Tenant.find({ userId, propertyId, roomId })
+    .exec()
+    .then((tenants) => {
+      if (tenants) {
+        let filteredTenants = tenants.filter((user) => user.roomId == roomId);
+
+        return res.json({ code: 200, model: filteredTenants.length });
+      } else {
+        return res.json({ code: 200, model: 0 });
+      }
+    })
+    .catch((err) => {
+      return res.json({ code: 502, model: err.message });
+    });
+};
 const getDuesTenant = () => {};
 module.exports = {
   getTenants,
   addTenant,
   getATenant,
+  getTenantCount,
 };
