@@ -122,6 +122,7 @@ const getATenant = (req, res) => {
       return res.json({ code: 502, model: error.message });
     });
 };
+//Teanant Count is Based on RoomId
 const getTenantCount = (req, res) => {
   const { userId, propertyId, roomId } = req.query;
   let obj = {};
@@ -140,10 +141,26 @@ const getTenantCount = (req, res) => {
       return res.json({ code: 502, model: err.message });
     });
 };
+const getAllTenantsCount = (req, res) => {
+  const { userId, propertyId } = req.query;
+  Tenant.find({ userId, propertyId })
+    .exec()
+    .then((tenants) => {
+      if (tenants) {
+        return res.json({ code: 200, model: tenants.length });
+      } else {
+        return res.json({ code: 200, model: 0 });
+      }
+    })
+    .catch((err) => {
+      return res.json({ code: 502, model: error.message });
+    });
+};
 const getDuesTenant = () => {};
 module.exports = {
   getTenants,
   addTenant,
   getATenant,
   getTenantCount,
+  getAllTenantsCount,
 };

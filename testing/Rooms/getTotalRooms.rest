@@ -1,0 +1,1 @@
+GET http://localhost:5000/api/room/getTotalRoomCounts?userId=64bc0b33aa83368ee4e44c18&propertyId=64bc0b41aa83368ee4e44c1a

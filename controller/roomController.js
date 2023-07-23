@@ -100,10 +100,24 @@ const getRoomName = (req, res) => {
       res.json({ code: 502 });
     });
 };
+const getTotalRoomCounts = (req, res) => {
+  const { userId, propertyId } = req.query;
+  Rooms.find({ userId, propertyId })
+    .exec()
+    .then((rooms) => {
+      const count = rooms.reduce((acc, curr) => acc + curr.rooms.length, 0);
+      return res.json({ code: 200, model: count });
+    })
+    .catch((err) => {
+      return err.message;
+    });
+};
+
 module.exports = {
   getRooms,
   getSingleRoom,
   updateRoom,
   getAllRooms,
   getRoomName,
+  getTotalRoomCounts,
 };
