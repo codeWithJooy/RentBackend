@@ -1,0 +1,1 @@
+GET http://localhost:5000/api/summary/getMonthExpense?userId=64bb662a0274557529ba6e63&propertyId=64bb663c0274557529ba6e65

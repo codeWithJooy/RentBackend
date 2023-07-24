@@ -10,6 +10,8 @@ const foodRoutes = require("./routes/foodRoutes");
 const memberRoutes = require("./routes/memberRoutes");
 const collectionRoutes = require("./routes/collectionRoutes");
 const duesRoutes = require("./routes/dueRoutes");
+const summaryRoutes = require("./routes/summaryRoutes");
+
 const app = express();
 app.use(express.json());
 app.use(cors());
@@ -23,4 +25,6 @@ app.use("/api/food", foodRoutes);
 app.use("/api/member", memberRoutes);
 app.use("/api/collection", collectionRoutes);
 app.use("/api/dues", duesRoutes);
+app.use("/api/summary", summaryRoutes);
+
 module.exports = app;
