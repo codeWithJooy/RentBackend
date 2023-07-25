@@ -10,4 +10,8 @@ router.get("/getDiscount", collectionControllers.getDiscount);
 router.get("/getReceiptId", collectionControllers.getReceiptId);
 router.get("/getAllDiscounts", collectionControllers.getAllCollections);
 router.get("/getReceiptData", collectionControllers.getReceiptData);
+router.get(
+  "/getAllCollectionByUser",
+  collectionControllers.getAllCollectionByUser
+);
 module.exports = router;

@@ -7,4 +7,5 @@ router.post("/addTenant", tenantControllers.addTenant);
 router.get("/getATenant", tenantControllers.getATenant);
 router.get("/getTenantCount", tenantControllers.getTenantCount);
 router.get("/getAllTenantsCount", tenantControllers.getAllTenantsCount);
+router.get("/getTenantName", tenantControllers.getTenantName);
 module.exports = router;

@@ -166,6 +166,30 @@ const getAllCollections = (req, res) => {
       return res.json({ code: 502, model: err.message });
     });
 };
+const getAllCollectionByUser = (req, res) => {
+  const { userId, propertyId } = req.query;
+  Collection.find({ userId, propertyId })
+    .exec()
+    .then((collection) => {
+      let arr = [];
+      for (let i = 0; i < collection.length; i++) {
+        for (let j = 0; j < collection[i].collections.length; j++) {
+          let obj = {};
+          obj.tenantId = collection[i].tenantId;
+          obj.type = collection[i].collections[j].type;
+          obj.amount = collection[i].collections[j].amount;
+          obj.date = collection[i].collections[j].date;
+          obj.mode = collection[i].collections[j].mode;
+          obj.receiptId = collection[i].collections[j].receiptId;
+          arr.push(obj);
+        }
+      }
+      return res.json({ code: 200, model: arr });
+    })
+    .catch((err) => {
+      return res.json({ code: 200, model: err.message });
+    });
+};
 const addDiscount = (req, res) => {
   const { userId, propertyId, tenantId } = req.query;
   const { type, amount, date } = req.body;
@@ -343,4 +367,5 @@ module.exports = {
   getAllDiscounts,
   getReceiptId,
   getReceiptData,
+  getAllCollectionByUser,
 };

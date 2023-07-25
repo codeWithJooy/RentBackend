@@ -52,7 +52,23 @@ const getMonthCollection = (req, res) => {
       return res.json({ code: 502, model: err.message });
     });
 };
-
+const getTotalCollection = (req, res) => {
+  const { userId, propertyId } = req.query;
+  Collection.find({ userId, propertyId })
+    .exec()
+    .then((collections) => {
+      const val = collections.reduce((acc, curr) => {
+        const newVal = curr.collections.reduce((accNew, currNew) => {
+          return accNew + currNew.amount;
+        }, 0);
+        return acc + newVal;
+      }, 0);
+      return res.json({ code: 200, model: val });
+    })
+    .catch((err) => {
+      return res.json({ code: 502, model: err.message });
+    });
+};
 const getCurrentDeposit = (req, res) => {
   const { userId, propertyId } = req.query;
   Collection.find({ userId, propertyId })
@@ -213,6 +229,7 @@ module.exports = {
   getCurrentDeposit,
   getTodaysCollection,
   getMonthCollection,
+  getTotalCollection,
   getMonthDue,
   getTotalDue,
   getMonthExpense,

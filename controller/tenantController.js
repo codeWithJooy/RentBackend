@@ -182,11 +182,25 @@ const getAllTenantsCount = (req, res) => {
       return res.json({ code: 502, model: error.message });
     });
 };
-const getDuesTenant = () => {};
+const getTenantName = (req, res) => {
+  const { userId, propertyId, tenantId } = req.query;
+  Tenant.findOne({ userId, propertyId, _id: tenantId })
+    .then((tenant) => {
+      if (tenant) {
+        return res.json({ code: 200, model: tenant.name });
+      } else {
+        return res.json({ code: 200, model: "Unknown" });
+      }
+    })
+    .catch((err) => {
+      return res.json({ code: 502, model: err.message });
+    });
+};
 module.exports = {
   getTenants,
   addTenant,
   getATenant,
   getTenantCount,
   getAllTenantsCount,
+  getTenantName,
 };
