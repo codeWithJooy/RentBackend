@@ -78,8 +78,27 @@ const addStudent = (req, res) => {
       return res.json({ code: 502, model: err.message });
     });
 };
+const studentLogin = (req, res) => {
+  const { email, password } = req.query;
+  Student.findOne({ email })
+    .then((student) => {
+      if (!student) {
+        return res.json({ code: 404, model: "Email doesn't exists" });
+      } else {
+        if (password != student.password) {
+          return res.json({ code: 404, model: "Password Mismatch Error" });
+        } else {
+          return res.json({ code: 200, model: student });
+        }
+      }
+    })
+    .catch((err) => {
+      return res.json({ code: 502, model: err.message });
+    });
+};
 
 module.exports = {
   checkCodeNumber,
   addStudent,
+  studentLogin,
 };
