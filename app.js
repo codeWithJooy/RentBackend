@@ -11,6 +11,7 @@ const memberRoutes = require("./routes/memberRoutes");
 const collectionRoutes = require("./routes/collectionRoutes");
 const duesRoutes = require("./routes/dueRoutes");
 const summaryRoutes = require("./routes/summaryRoutes");
+const studentRoutes = require("./routes/Student/studentRoutes");
 
 const app = express();
 app.use(express.json());
@@ -26,5 +27,6 @@ app.use("/api/member", memberRoutes);
 app.use("/api/collection", collectionRoutes);
 app.use("/api/dues", duesRoutes);
 app.use("/api/summary", summaryRoutes);
+app.use("/api/student", studentRoutes);
 
 module.exports = app;

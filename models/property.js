@@ -21,6 +21,10 @@ const propertySchema = new mongoose.Schema(
       required: true,
       trim: true,
     },
+    code: {
+      type: String,
+      trim: true,
+    },
   },
   {
     timestamps: true,
