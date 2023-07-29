@@ -1,0 +1,1 @@
+http://localhost:5000/api/student/checkCodeNumber?code=123456&number=7980651358
