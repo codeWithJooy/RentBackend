@@ -2,6 +2,7 @@ const mongoose = require("mongoose");
 const Property = require("../../models/property");
 const Tenant = require("../../models/tenant");
 const Student = require("../../models/student");
+const TempCollection = require("../../models/tempCollection");
 
 const checkCodeNumber = (req, res) => {
   const { code, number } = req.query;
@@ -96,9 +97,52 @@ const studentLogin = (req, res) => {
       return res.json({ code: 502, model: err.message });
     });
 };
+const addPendingCollection = (req, res) => {
+  const { userId, propertyId, tenantId, type, due, amount, date, mode } =
+    req.body;
+  Tenant.findOne({ userId, propertyId, _id: tenantId })
+    .then((tenant) => {
+      if (tenant) {
+        const dueIndex = tenant.dues.findIndex(
+          (unit) =>
+            unit.type == type &&
+            unit.status != "pending" &&
+            parseInt(unit.due) - parseInt(unit.collection) == due
+        );
+        tenant.dues[dueIndex].status = "pending";
+        tenant.markModified("dues");
+        tenant.save();
+        TempCollection.findOne({ userId, propertyId, tenantId, type })
+          .then((temp) => {
+            if (!temp) {
+              let newTemp = new TempCollection({
+                userId,
+                propertyId,
+                tenantId,
+                type,
+                due,
+                amount,
+                date,
+                mode,
+              });
+              newTemp.save().then(() => {
+                res.json({ code: 200 });
+              });
+            }
+          })
+          .catch((err) => {
+            return res.json({ code: 502, model: err.message });
+          });
+      }
+    })
+    .catch((err) => {
+      return res.json({ code: 502, model: err.message });
+    });
+};
 
 module.exports = {
   checkCodeNumber,
   addStudent,
   studentLogin,
+  addPendingCollection,
 };
