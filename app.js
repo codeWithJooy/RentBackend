@@ -12,6 +12,7 @@ const collectionRoutes = require("./routes/collectionRoutes");
 const duesRoutes = require("./routes/dueRoutes");
 const summaryRoutes = require("./routes/summaryRoutes");
 const studentRoutes = require("./routes/Student/studentRoutes");
+const complaintRoutes = require("./routes/complaintRoutes")
 
 const app = express();
 app.use(express.json());
@@ -28,5 +29,6 @@ app.use("/api/collection", collectionRoutes);
 app.use("/api/dues", duesRoutes);
 app.use("/api/summary", summaryRoutes);
 app.use("/api/student", studentRoutes);
+app.use("/api/complaint", complaintRoutes)
 
 module.exports = app;
