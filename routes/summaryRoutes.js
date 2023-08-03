@@ -12,5 +12,6 @@ router.get("/getTotalRooms", summaryController.getTotalRooms);
 router.get("/getTotalBed", summaryController.getTotalBed);
 router.get("/getVacantBed", summaryController.getVacantBed);
 router.get("/getTotalTenants", summaryController.getTotalTenants);
+router.get("/getNotificationCount",summaryController.getNotificationCount)
 
 module.exports = router;
