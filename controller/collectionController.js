@@ -3,6 +3,8 @@ const Collection = require("../models/collection");
 const Discount = require("../models/discount");
 const Receipt = require("../models/receipt");
 const Tenant = require("../models/tenant");
+const TempCollection = require("../models/tempCollection")
+const tenantHelper=require("../helper/tenantHelper")
 const months = [
   { name: "Jan", days: 31 },
   { name: "Feb", days: 28 },
@@ -357,7 +359,32 @@ const getReceiptData = (req, res) => {
       return res.json({ code: 502, model: err.message });
     });
 };
-
+const getTempCollection = async(req, res) => {
+  const { userId, propertyId } = req.query
+  try {
+    const temp = await TempCollection.find({ userId, propertyId }).exec();
+    if (!temp || temp.length === 0) {
+      return res.json({code:404,model:"No Payments Done"})
+    } else {
+      const arr = await Promise.all(temp.map(async (unit) => {
+        const obj = {
+          type: unit.type,
+          amount: unit.amount,
+          date: unit.date,
+          mode: unit.mode,
+          tenantId:unit.tenantId
+        };
+        let {name,roomId} = await tenantHelper.getTenantName(unit.tenantId);
+            obj.name = name;
+        obj.room = await tenantHelper.getTenantRoom(userId, propertyId, roomId);
+        return obj;
+      }))
+      return res.json({ code: 200, model: arr });
+    }
+  } catch (err) {
+    return res.json({code:502,model:err.message})
+  }
+}
 module.exports = {
   addCollection,
   getCollection,
@@ -368,4 +395,5 @@ module.exports = {
   getReceiptId,
   getReceiptData,
   getAllCollectionByUser,
+  getTempCollection,
 };

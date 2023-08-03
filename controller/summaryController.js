@@ -3,6 +3,10 @@ const Collection = require("../models/collection");
 const Tenant = require("../models/tenant");
 const Expense = require("../models/expense");
 const Rooms = require("../models/rooms");
+const TempCollection = require("../models/tempCollection")
+const Complaint = require("../models/complaint")
+const notificationHelper = require("../helper/notificationHelper")
+
 const { areDatesEqual, isInMonthRange } = require("../helper/summaryHelper");
 
 const getTodaysCollection = (req, res) => {
@@ -224,6 +228,12 @@ const getTotalTenants = (req, res) => {
       return res.json({ code: 502, model: error.message });
     });
 };
+const getNotificationCount = async (req, res) => {
+  const { userId, propertyId } = req.query
+  let data = await notificationHelper.getComplaintCount(userId, propertyId)
+  data+=await notificationHelper.getCollectionCount(userId,propertyId)
+  return res.json({code:200,model:data})
+}
 
 module.exports = {
   getCurrentDeposit,
@@ -237,4 +247,5 @@ module.exports = {
   getTotalBed,
   getVacantBed,
   getTotalTenants,
+  getNotificationCount,
 };

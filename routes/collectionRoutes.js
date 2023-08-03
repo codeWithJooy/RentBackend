@@ -14,4 +14,5 @@ router.get(
   "/getAllCollectionByUser",
   collectionControllers.getAllCollectionByUser
 );
+router.get("/getTempCollection",collectionControllers.getTempCollection)
 module.exports = router;
