@@ -62,7 +62,9 @@ const addProperty =async (req, res) => {
             userId,
             propertyId: newProperty._id,
             propertyName: name,
-            propertyCode:newProperty.code
+            propertyCode: newProperty.code,
+            pincode: newProperty.pincode,
+            contact:newProperty.contact,
           });
         })
         .catch((err) => {

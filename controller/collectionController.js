@@ -4,6 +4,7 @@ const Discount = require("../models/discount");
 const Receipt = require("../models/receipt");
 const Tenant = require("../models/tenant");
 const TempCollection = require("../models/tempCollection")
+
 const tenantHelper=require("../helper/tenantHelper")
 const months = [
   { name: "Jan", days: 31 },
@@ -37,6 +38,7 @@ const addCollection = (req, res) => {
           parseInt(tenant.dues[dueIndex].collection) + parseInt(amount);
         tenant.dues[dueIndex].discount =
           parseInt(tenant.dues[dueIndex].discount) + parseInt(discount);
+        tenant.dues[dueIndex].status="Non"
         tenant.markModified("dues");
         tenant.save();
       }
@@ -135,7 +137,9 @@ const addCollection = (req, res) => {
         return res.json({ code: 502, model: err.message });
       });
   }
-  return res.json({ code: 200 });
+  TempCollection.deleteOne({ userId, propertyId, tenantId, type })
+                .then(()=>{return res.json({ code: 200 });})
+  
 };
 const getCollection = (req, res) => {
   const { userId, propertyId, tenantId } = req.query;
@@ -372,6 +376,7 @@ const getTempCollection = async(req, res) => {
           amount: unit.amount,
           date: unit.date,
           mode: unit.mode,
+          due:unit.due,
           tenantId:unit.tenantId
         };
         let {name,roomId} = await tenantHelper.getTenantName(unit.tenantId);
