@@ -10,17 +10,25 @@ const roomSchema = new mongoose.Schema(
       type: mongoose.Schema.Types.ObjectId,
       required: true,
     },
-    floorName: {
+    floorId: {
+      type: mongoose.Schema.Types.ObjectId,
+      required: true,
+    },
+    name: {
       type: String,
       required: true,
     },
-    roomPresent: {
-      type: Boolean,
-      default: false,
+    type: {
+      type: String,
+      required: true,
     },
-    rooms: {
-      type: [],
-      default: [],
+    status: {
+      type: String,
+      required: true,
+    },
+    rate: {
+      type: String,
+      required: true,
     },
   },
   {
