@@ -2,17 +2,17 @@ const mongoose = require("mongoose");
 const Rooms = require("../models/rooms");
 
 const getRooms = (req, res) => {
-  const { userId, propertyId, floorName } = req.query;
-  Rooms.findOne({
-    userId: userId,
-    propertyId: propertyId,
-    floorName: floorName,
-  })
+  const { userId, propertyId, floorId } = req.query;
+  Rooms.find({
+    userId,
+    propertyId,
+    floorId,
+  }).exec()
     .then((room) => {
       if (!room) {
         return res.json({ code: 404 });
       } else {
-        return res.json({ code: 200, model: room.rooms });
+        return res.json({ code: 200, model: room });
       }
     })
     .catch((err) => {
@@ -41,39 +41,33 @@ const getAllRooms = (req, res) => {
     });
 };
 const getSingleRoom = (req, res) => {
-  const { userId, propertyId, floorName, roomName } = req.query;
-  Rooms.findOne({ userId, propertyId, floorName })
+  const { userId, propertyId, roomId } = req.query;
+  Rooms.findOne({ userId, propertyId, _id: roomId }).exec()
     .then((doc) => {
       if (!doc) {
         return res.json({ code: 404 });
       }
-      const room = doc.rooms.find((room) => room.name == roomName);
-      if (!room) {
-        return res.json({ code: 404 });
-      }
-      return res.json({ code: 200, model: room });
+      return res.json({ code: 200, model: doc });
     })
     .catch((error) => res.json({ code: 502 }));
 };
 const updateRoom = (req, res) => {
-  const { userId, propertyId, floorName, id } = req.query;
+  const { userId, propertyId, roomId } = req.query;
   const { name, rate } = req.body;
 
-  Rooms.findOne({ userId, propertyId, floorName })
+  Rooms.findOne({ userId, propertyId, _id: roomId })
     .then((doc) => {
       if (!doc) {
         return res.json({ code: 404, message: "Room DB Empty" });
       } else {
-        const roomIndex = doc.rooms.findIndex((room) => room.id == id);
-        if (roomIndex === -1) {
-          return res.json({ code: 404, message: "Room Not Found" });
-        } else {
-          doc.rooms[roomIndex].name = name;
-          doc.rooms[roomIndex].rate = rate;
-          doc.markModified("rooms");
-          doc.save();
-          return res.json({ code: 200, message: "Update Successfull" });
-        }
+
+        doc.name = name;
+        doc.rate = rate;
+        doc.markModified("name");
+        doc.markModified("rate")
+        doc.save();
+        return res.json({ code: 200, message: "Update Successfull" });
+
       }
     })
     .catch((err) => {
