@@ -25,19 +25,16 @@ const getAllRooms = (req, res) => {
   Rooms.find({ userId, propertyId })
     .exec()
     .then((rooms) => {
-      // Extract all rooms from the floors
-      const allRooms = rooms.reduce((acc, curr) => [...acc, ...curr.rooms], []);
-
-      // Check if any rooms are present
-      if (allRooms.length === 0) {
-        res.json({ code: 200, model: [] });
-      } else {
-        res.json({ code: 200, model: allRooms });
+      if (!rooms) {
+        res.json({ code: 404, msg: "No Rooms Present" });
+      }
+      else {
+        res.json({ code: 200, model: rooms });
       }
     })
     .catch((err) => {
       console.log(err);
-      res.json({ code: 502 });
+      res.json({ code: 502, msg: err.message });
     });
 };
 const getSingleRoom = (req, res) => {
@@ -77,21 +74,19 @@ const updateRoom = (req, res) => {
 const getRoomName = (req, res) => {
   const { userId, propertyId, roomId } = req.query;
 
-  Rooms.find({ userId, propertyId })
+  Rooms.findOne({ userId, propertyId, roomId })
     .exec()
-    .then((rooms) => {
-      // Extract all rooms from the floors
-      const allRooms = rooms.reduce((acc, curr) => [...acc, ...curr.rooms], []);
-      const room = allRooms.filter((item) => item.id == roomId);
+    .then((room) => {
+
       if (!room) {
         res.json({ code: 200, model: "Unknown" });
       } else {
-        res.json({ code: 200, model: room[0].name });
+        res.json({ code: 200, model: room.name });
       }
     })
     .catch((err) => {
       console.log(err);
-      res.json({ code: 502 });
+      res.json({ code: 502, msg: err.message });
     });
 };
 const getTotalRoomCounts = (req, res) => {
