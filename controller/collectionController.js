@@ -5,7 +5,7 @@ const Receipt = require("../models/receipt");
 const Tenant = require("../models/tenant");
 const TempCollection = require("../models/tempCollection")
 
-const tenantHelper=require("../helper/tenantHelper")
+const tenantHelper = require("../helper/tenantHelper")
 const months = [
   { name: "Jan", days: 31 },
   { name: "Feb", days: 28 },
@@ -38,7 +38,7 @@ const addCollection = (req, res) => {
           parseInt(tenant.dues[dueIndex].collection) + parseInt(amount);
         tenant.dues[dueIndex].discount =
           parseInt(tenant.dues[dueIndex].discount) + parseInt(discount);
-        tenant.dues[dueIndex].status="Non"
+        tenant.dues[dueIndex].status = "Non"
         tenant.markModified("dues");
         tenant.save();
       }
@@ -138,18 +138,18 @@ const addCollection = (req, res) => {
       });
   }
   TempCollection.deleteOne({ userId, propertyId, tenantId, type })
-                .then(()=>{return res.json({ code: 200 });})
-  
+    .then(() => { return res.json({ code: 200 }); })
+
 };
 const getCollection = (req, res) => {
   const { userId, propertyId, tenantId } = req.query;
-  console.log(tenantId);
-  Collection.findOne({ tenantId })
+
+  Collection.find({ tenantId }).exec()
     .then((collection) => {
       if (!collection) {
         return res.json({ code: 200, model: [], message: "Not Present" });
       } else {
-        return res.json({ code: 200, model: collection.collections });
+        return res.json({ code: 200, model: collection });
       }
     })
     .catch((err) => {
@@ -242,12 +242,12 @@ const addDiscount = (req, res) => {
 };
 const getDiscount = (req, res) => {
   const { userId, propertyId, tenantId } = req.query;
-  Discount.findOne({ tenantId })
+  Discount.find({ tenantId }).exec()
     .then((discount) => {
       if (!discount) {
         return res.json({ code: 200, model: [], message: "Not Present" });
       } else {
-        return res.json({ code: 200, model: discount.discounts });
+        return res.json({ code: 200, model: discount });
       }
     })
     .catch((err) => {
@@ -363,12 +363,12 @@ const getReceiptData = (req, res) => {
       return res.json({ code: 502, model: err.message });
     });
 };
-const getTempCollection = async(req, res) => {
+const getTempCollection = async (req, res) => {
   const { userId, propertyId } = req.query
   try {
     const temp = await TempCollection.find({ userId, propertyId }).exec();
     if (!temp || temp.length === 0) {
-      return res.json({code:404,model:"No Payments Done"})
+      return res.json({ code: 404, model: "No Payments Done" })
     } else {
       const arr = await Promise.all(temp.map(async (unit) => {
         const obj = {
@@ -376,18 +376,18 @@ const getTempCollection = async(req, res) => {
           amount: unit.amount,
           date: unit.date,
           mode: unit.mode,
-          due:unit.due,
-          tenantId:unit.tenantId
+          due: unit.due,
+          tenantId: unit.tenantId
         };
-        let {name,roomId} = await tenantHelper.getTenantName(unit.tenantId);
-            obj.name = name;
+        let { name, roomId } = await tenantHelper.getTenantName(unit.tenantId);
+        obj.name = name;
         obj.room = await tenantHelper.getTenantRoom(userId, propertyId, roomId);
         return obj;
       }))
       return res.json({ code: 200, model: arr });
     }
   } catch (err) {
-    return res.json({code:502,model:err.message})
+    return res.json({ code: 502, model: err.message })
   }
 }
 module.exports = {
