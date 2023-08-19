@@ -1,5 +1,6 @@
 const mongoose = require("mongoose");
 const Tenant = require("../models/tenant");
+const Dues = require("../models/dues")
 
 const addDuesRoom = (req, res) => {
   const { userId, propertyId, roomId } = req.query;
@@ -42,7 +43,23 @@ const addDuesTenant = (req, res) => {
       return res.json({ code: 502, model: err.message });
     });
 };
+const getDuesTenant = async (req, res) => {
+  try {
+    const { userId, propertyId, tenantId } = req.query
+    const dues = await Dues.find({ userId, propertyId, tenantId }).exec()
+    if (dues) {
+      return res.json({ code: 200, model: dues })
+    }
+    else {
+      return res.json({ code: 404, msg: "No Dues Found" })
+    }
+  }
+  catch (error) {
+    return res.json({ code: 502, msg: error.message })
+  }
+}
 module.exports = {
   addDuesTenant,
   addDuesRoom,
+  getDuesTenant,
 };
