@@ -5,6 +5,7 @@ const Expense = require("../models/expense");
 const Rooms = require("../models/rooms");
 const TempCollection = require("../models/tempCollection")
 const Complaint = require("../models/complaint")
+const Dues = require("../models/dues")
 const notificationHelper = require("../helper/notificationHelper")
 
 const { areDatesEqual, isInMonthRange } = require("../helper/summaryHelper");
@@ -16,16 +17,14 @@ const getTodaysCollection = (req, res) => {
     .then((collections) => {
       const today = new Date();
       const total = collections.reduce((acc, curr) => {
-        const amt = curr.collections.reduce((accNew, currNew) => {
-          if (areDatesEqual(today, new Date(currNew.date))) {
-            return accNew + parseInt(currNew.amount);
-          } else {
-            return accNew + 0;
-          }
-        }, 0);
-        return acc + amt;
+        if (areDatesEqual(today, new Date(curr.date))) {
+          return acc + parseInt(curr.amount)
+        }
+        else {
+          return acc + 0
+        }
       }, 0);
-      console.log(total);
+
       return res.json({ code: 200, model: total });
     })
     .catch((err) => {
@@ -40,16 +39,13 @@ const getMonthCollection = (req, res) => {
     .then((collections) => {
       const today = new Date();
       const total = collections.reduce((acc, curr) => {
-        const amt = curr.collections.reduce((accNew, currNew) => {
-          if (isInMonthRange(today, new Date(currNew.date))) {
-            return accNew + parseInt(currNew.amount);
-          } else {
-            return accNew + 0;
-          }
-        }, 0);
-        return acc + amt;
+        if (isInMonthRange(today, new Date(curr.date))) {
+          return acc + parseInt(curr.amount);
+        } else {
+          return acc + 0;
+        }
       }, 0);
-      console.log(total);
+
       return res.json({ code: 200, model: total });
     })
     .catch((err) => {
@@ -62,10 +58,7 @@ const getTotalCollection = (req, res) => {
     .exec()
     .then((collections) => {
       const val = collections.reduce((acc, curr) => {
-        const newVal = curr.collections.reduce((accNew, currNew) => {
-          return accNew + currNew.amount;
-        }, 0);
-        return acc + newVal;
+        return acc + curr.amount
       }, 0);
       return res.json({ code: 200, model: val });
     })
@@ -79,14 +72,13 @@ const getCurrentDeposit = (req, res) => {
     .exec()
     .then((collections) => {
       const total = collections.reduce((acc, curr) => {
-        const amt = curr.collections.reduce((accNew, currNew) => {
-          if (currNew.type == "Security Deposit") {
-            return accNew + parseInt(currNew.amount);
-          } else {
-            return accNew + 0;
-          }
-        }, 0);
-        return acc + amt;
+        if (curr.dueType == "Security Deposit") {
+          return acc + parseInt(curr.amount)
+        }
+        else {
+          return acc + 0;
+        }
+
       }, 0);
       console.log(total);
       return res.json({ code: 200, model: total });
@@ -97,19 +89,16 @@ const getCurrentDeposit = (req, res) => {
 };
 const getMonthDue = (req, res) => {
   const { userId, propertyId } = req.query;
-  Tenant.find({ userId, propertyId })
+  Dues.find({ userId, propertyId })
     .exec()
-    .then((tenant) => {
+    .then((dueUnit) => {
       const today = new Date();
-      const due = tenant.reduce((acc, curr) => {
-        const amt = curr.dues.reduce((accNew, currNew) => {
-          if (isInMonthRange(today, new Date(currNew.dueDate))) {
-            return (
-              accNew + parseInt(currNew.due) - parseInt(currNew.collection)
-            );
-          } else return accNew + 0;
-        }, 0);
-        return acc + amt;
+      const due = dueUnit.reduce((acc, curr) => {
+        if (isInMonthRange(today, new Date(curr.dueDate))) {
+          return (
+            acc + parseInt(curr.due) - parseInt(curr.collections)
+          );
+        } else return acc + 0;
       }, 0);
       return res.json({ code: 200, model: due });
     })
@@ -119,14 +108,11 @@ const getMonthDue = (req, res) => {
 };
 const getTotalDue = (req, res) => {
   const { userId, propertyId } = req.query;
-  Tenant.find({ userId, propertyId })
+  Dues.find({ userId, propertyId })
     .exec()
-    .then((tenant) => {
-      const due = tenant.reduce((acc, curr) => {
-        const amt = curr.dues.reduce((accNew, currNew) => {
-          return accNew + parseInt(currNew.due) - parseInt(currNew.collection);
-        }, 0);
-        return acc + amt;
+    .then((dueUnit) => {
+      const due = dueUnit.reduce((acc, curr) => {
+        return acc + parseInt(curr.due) - parseInt(curr.collections)
       }, 0);
       return res.json({ code: 200, model: due });
     })
@@ -231,8 +217,8 @@ const getTotalTenants = (req, res) => {
 const getNotificationCount = async (req, res) => {
   const { userId, propertyId } = req.query
   let data = await notificationHelper.getComplaintCount(userId, propertyId)
-  data+=await notificationHelper.getCollectionCount(userId,propertyId)
-  return res.json({code:200,model:data})
+  data += await notificationHelper.getCollectionCount(userId, propertyId)
+  return res.json({ code: 200, model: data })
 }
 
 module.exports = {
