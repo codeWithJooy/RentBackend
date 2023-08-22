@@ -58,8 +58,24 @@ const getDuesTenant = async (req, res) => {
     return res.json({ code: 502, msg: error.message })
   }
 }
+const getDues = async (req, res) => {
+  try {
+    const { userId, propertyId } = req.query
+    let due = await Dues.find({ userId, propertyId }).exec()
+    if (due) {
+      return res.json({ code: 200, model: due })
+    }
+    else {
+      return res.json({ code: 404, msg: "Nothing Found" })
+    }
+  }
+  catch (error) {
+    return res.json({ code: 502, msg: error.msg })
+  }
+}
 module.exports = {
   addDuesTenant,
   addDuesRoom,
   getDuesTenant,
+  getDues,
 };
