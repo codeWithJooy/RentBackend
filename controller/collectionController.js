@@ -4,7 +4,7 @@ const Discount = require("../models/discount");
 const Receipt = require("../models/receipt");
 const Tenant = require("../models/tenant");
 const TempCollection = require("../models/tempCollection")
-
+const Dues = require("../models/dues")
 const tenantHelper = require("../helper/tenantHelper")
 const months = [
   { name: "Jan", days: 31 },
@@ -20,127 +20,53 @@ const months = [
   { name: "Nov", days: 30 },
   { name: "Dec", days: 31 },
 ];
-const addCollection = (req, res) => {
-  const { userId, propertyId, tenantId } = req.query;
-  const { type, amount, date, mode, discount, receiptId, openingDue } =
-    req.body;
-  let obj = { type, amount, date, mode, receiptId, openingDue };
-  let discountObj = { type, amount: discount, date };
-  //Update Tenant
-  Tenant.findOne({ userId, propertyId, _id: tenantId })
-    .then((tenant) => {
-      if (tenant) {
-        console.log(tenant);
-        const dueIndex = tenant.dues.findIndex((due) => due.type == type);
-        tenant.dues[dueIndex].due =
-          parseInt(tenant.dues[dueIndex].due) - parseInt(discount);
-        tenant.dues[dueIndex].collection =
-          parseInt(tenant.dues[dueIndex].collection) + parseInt(amount);
-        tenant.dues[dueIndex].discount =
-          parseInt(tenant.dues[dueIndex].discount) + parseInt(discount);
-        tenant.dues[dueIndex].status = "Non"
-        tenant.markModified("dues");
-        tenant.save();
-      }
-    })
-    .catch((err) => {
-      return res.json({ code: 502, model: err.message });
-    });
-  //Update Collection
-  if (amount > 0) {
-    Collection.findOne({
-      $and: [
-        { userId: userId },
-        { propertyId: propertyId },
-        { tenantId: tenantId },
-      ],
-    })
-      .then((collection) => {
-        let arr = [];
-        arr.push(obj);
-        if (collection) {
-          collection.collections.push(obj);
-          collection.markModified("collections");
-          collection.save();
-        } else {
-          const newColllection = new Collection({
-            userId,
-            propertyId,
-            tenantId,
-            collections: arr,
-          });
-          newColllection.save();
-        }
-      })
-      .catch((err) => {
-        return res.json({ code: 502, model: err.message });
-      });
-  }
-  //Update Receipt
-  let receiptArr = receiptId.split("/");
 
-  Receipt.findOne({
-    userId,
-    propertyId,
-    dueType: receiptArr[1],
-    month: receiptArr[2],
-    year: receiptArr[3],
-  })
-    .then((receipt) => {
+const addCollection = async (req, res) => {
+  try {
+    const { userId, propertyId, tenantId } = req.query;
+    const { type, amount, date, mode, discount, receiptId, openingDue } =
+      req.body;
+    let obj = { type, amount, date, mode, receiptId, openingDue };
+    let discountObj = { type, amount: discount, date };
+    let dueData = await Dues.findOne({ userId, propertyId, tenantId, dueType: type }).exec()
+    if (dueData) {
+      dueData.due = parseInt(dueData.due) - parseInt(discount)
+      dueData.collections = parseInt(dueData.collections) + parseInt(amount)
+      dueData.discount = parseInt(dueData.discount) + parseInt(discount)
+      dueData.status = "Non"
+      dueData.markModified("due")
+      dueData.markModified("collection")
+      dueData.markModified("discount")
+      dueData.markModified("status")
+      dueData.save()
+
+      if (amount > 0) {
+        let collectionUnit = new Collection({ userId, propertyId, tenantId, dueType: type, amount, date, mode, receiptId, openingDue })
+        let newCollection = collectionUnit.save()
+      }
+
+      let receiptArr = receiptId.split("/")
+      let receipt = await Receipt.findOne({ userId, propertyId, dueType: receiptArr[1], month: receiptArr[2], year: receiptArr[3] }).exec()
       if (receipt) {
-        receipt.count = receiptId;
-        receipt.markModified("count");
-        receipt.save();
-      } else {
-        const newRece = new Receipt({
-          userId,
-          propertyId,
-          dueType: receiptArr[1],
-          month: receiptArr[2],
-          year: receiptArr[3],
-          count: receiptId,
-        });
-        newRece.save();
+        receipt.count = receiptId
+        receipt.markModified("count")
+        receipt.save()
       }
-    })
-    .catch((err) => {
-      return res.json({ code: 502, model: err.message });
-    });
-
-  //Update Discount
-  if (discount > 0) {
-    let disCountArr = [];
-    disCountArr.push(discountObj);
-    Discount.findOne({
-      $and: [
-        { userId: userId },
-        { propertyId: propertyId },
-        { tenantId: tenantId },
-      ],
-    })
-      .then((newdiscount) => {
-        if (newdiscount) {
-          newdiscount.discounts.push(discountObj);
-          newdiscount.markModified("discounts");
-          newdiscount.save();
-        } else {
-          const newDiscount = new Discount({
-            userId,
-            propertyId,
-            tenantId,
-            discounts: disCountArr,
-          });
-          newDiscount.save();
-        }
-      })
-      .catch((err) => {
-        return res.json({ code: 502, model: err.message });
-      });
+      else {
+        let newReceipt = new Receipt({ userId, propertyId, dueType: receiptArr[1], month: receiptArr[2], year: receiptArr[3], count: receiptId }).save()
+      }
+      if (discount > 0) {
+        let discountUnit = new Discount({ userId, propertyId, tenantId, dueType: type, amount: discount, date }).save()
+      }
+      let tempCol = await TempCollection.deleteOne({ userId, propertyId, tenantId, type })
+      if (tempCol) {
+        return res.json({ code: 200 });
+      }
+    }
+  } catch (error) {
+    return res.json({ code: 502, msg: error.mesage })
   }
-  TempCollection.deleteOne({ userId, propertyId, tenantId, type })
-    .then(() => { return res.json({ code: 200 }); })
-
-};
+}
 const getCollection = (req, res) => {
   const { userId, propertyId, tenantId } = req.query;
 
@@ -179,16 +105,16 @@ const getAllCollectionByUser = (req, res) => {
     .then((collection) => {
       let arr = [];
       for (let i = 0; i < collection.length; i++) {
-        for (let j = 0; j < collection[i].collections.length; j++) {
-          let obj = {};
-          obj.tenantId = collection[i].tenantId;
-          obj.type = collection[i].collections[j].type;
-          obj.amount = collection[i].collections[j].amount;
-          obj.date = collection[i].collections[j].date;
-          obj.mode = collection[i].collections[j].mode;
-          obj.receiptId = collection[i].collections[j].receiptId;
-          arr.push(obj);
-        }
+
+        let obj = {};
+        obj.tenantId = collection[i].tenantId;
+        obj.type = collection[i].dueType;
+        obj.amount = collection[i].amount;
+        obj.date = collection[i].date;
+        obj.mode = collection[i].mode;
+        obj.receiptId = collection[i].receiptId;
+        arr.push(obj);
+
       }
       return res.json({ code: 200, model: arr });
     })
