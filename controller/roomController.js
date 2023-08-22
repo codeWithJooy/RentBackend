@@ -74,7 +74,7 @@ const updateRoom = (req, res) => {
 const getRoomName = (req, res) => {
   const { userId, propertyId, roomId } = req.query;
 
-  Rooms.findOne({ userId, propertyId, roomId })
+  Rooms.findOne({ userId, propertyId, _id: roomId })
     .exec()
     .then((room) => {
 
@@ -94,8 +94,7 @@ const getTotalRoomCounts = (req, res) => {
   Rooms.find({ userId, propertyId })
     .exec()
     .then((rooms) => {
-      const count = rooms.reduce((acc, curr) => acc + curr.rooms.length, 0);
-      return res.json({ code: 200, model: count });
+      return res.json({ code: 200, model: rooms.length });
     })
     .catch((err) => {
       return err.message;
