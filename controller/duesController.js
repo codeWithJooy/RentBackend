@@ -53,7 +53,8 @@ const getDuesTenant = async (req, res) => {
     const { userId, propertyId, tenantId } = req.query
     const dues = await Dues.find({ userId, propertyId, tenantId }).exec()
     if (dues) {
-      return res.json({ code: 200, model: dues })
+      let duesFilter = dues.filter((item) => item.status != "pending")
+      return res.json({ code: 200, model: duesFilter })
     }
     else {
       return res.json({ code: 404, msg: "No Dues Found" })
@@ -68,7 +69,9 @@ const getDues = async (req, res) => {
     const { userId, propertyId } = req.query
     let due = await Dues.find({ userId, propertyId }).exec()
     if (due) {
-      return res.json({ code: 200, model: due })
+      let duesFilter = due.filter((item) => item.status != "pending")
+      return res.json({ code: 200, model: duesFilter })
+
     }
     else {
       return res.json({ code: 404, msg: "Nothing Found" })
