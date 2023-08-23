@@ -7,16 +7,15 @@ const moment = require("moment");
 const roomAddHelper = require("../helper/roomAddHelper");
 
 const addProperty = async (req, res) => {
-  const { name, contact, pincode, userId } = req.body;
+  const { name, contact, pincode, code, userId } = req.body;
   let present = true
-  let code = ""
-  while (present) {
-    code = Math.floor(100000 + Math.random() * 900000).toString()
-    let property = await PropertyDetails.findOne({ code }).exec()
-    if (!property) {
-      present = false
-    }
+
+
+  let property = await PropertyDetails.findOne({ code }).exec()
+  if (property) {
+    return res.json({ code: 404, msg: "Code Already Present" })
   }
+
 
   const newProperty = new PropertyDetails({ userId, name, contact, pincode, code });
   newProperty
