@@ -2,6 +2,7 @@ const mongoose = require("mongoose");
 const Property = require("../../models/property");
 const Tenant = require("../../models/tenant");
 const Student = require("../../models/student");
+const Collections = require("../../models/collection")
 const TempCollection = require("../../models/tempCollection");
 const Dues = require("../../models/dues");
 
@@ -163,8 +164,27 @@ const addPendingCollection = async (req, res) => {
 const getStudentDues = async (req, res) => {
   try {
     const { userId, propertyId, tenantId } = req.query
-    const dues = await Dues.find({ userId, propertyId, tenantId }).exec()
-    if (dues) {
+    const dueData = await Dues.find({ userId, propertyId, tenantId }).exec()
+
+    if (dueData) {
+
+      return res.json({ code: 200, model: dueData })
+    }
+    else {
+      return res.json({ code: 404, msg: "No Dues Found" })
+    }
+  }
+  catch (error) {
+    return res.json({ code: 502, msg: error.message })
+  }
+}
+const getStudentDuesStatus = async (req, res) => {
+  try {
+    const { userId, propertyId, tenantId } = req.query
+    const dueData = await Dues.find({ userId, propertyId, tenantId }).exec()
+
+    if (dueData) {
+      let dues = dueData.filter((unit) => unit.status != "pending")
       return res.json({ code: 200, model: dues })
     }
     else {
@@ -175,11 +195,63 @@ const getStudentDues = async (req, res) => {
     return res.json({ code: 502, msg: error.message })
   }
 }
-
+const getStudentTotalDues = async (req, res) => {
+  try {
+    const { userId, propertyId, tenantId } = req.query
+    const dueData = await Dues.find({ userId, propertyId, tenantId }).exec()
+    if (dueData) {
+      let dues = dueData.filter((unit) => unit.status != "pending")
+      console.log(dues)
+      let sum = dues.reduce((acc, curr) => {
+        return acc + parseInt(curr.due) - parseInt(curr.collections)
+      }, 0)
+      return res.json({ code: 200, model: sum })
+    }
+  } catch (error) {
+    return res.json({ code: 502, msg: error.message })
+  }
+}
+const getStudentExpenses = async (req, res) => {
+  try {
+    const { userId, propertyId, tenantId } = req.query
+    const collections = await Collections.find({ userId, propertyId, tenantId }).exec()
+    if (collections) {
+      return res.json({ code: 200, model: collections })
+    }
+    else {
+      return res.json({ code: 404, msg: "No Dues Found" })
+    }
+  }
+  catch (error) {
+    return res.json({ code: 502, msg: error.message })
+  }
+}
+const getStudentTotalExpenses = async (req, res) => {
+  try {
+    const { userId, propertyId, tenantId } = req.query
+    const collections = await Collections.find({ userId, propertyId, tenantId }).exec()
+    if (collections) {
+      let total = collections.reduce((acc, curr) => {
+        return acc + parseInt(curr.amount)
+      }, 0)
+      return res.json({ code: 200, model: total })
+    }
+    else {
+      return res.json({ code: 404, msg: "No Payment Done" })
+    }
+  }
+  catch (error) {
+    return res.json({ code: 502, msg: error.message })
+  }
+}
 module.exports = {
   checkCodeNumber,
   addStudent,
   studentLogin,
   addPendingCollection,
   getStudentDues,
+  getStudentDuesStatus,
+  getStudentTotalDues,
+  getStudentExpenses,
+  getStudentTotalExpenses,
 };

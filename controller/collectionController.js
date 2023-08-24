@@ -58,7 +58,7 @@ const addCollection = async (req, res) => {
       if (discount > 0) {
         let discountUnit = new Discount({ userId, propertyId, tenantId, dueType: type, amount: discount, date }).save()
       }
-      let tempCol = await TempCollection.deleteOne({ userId, propertyId, tenantId, type })
+      let tempCol = await TempCollection.deleteOne({ userId, propertyId, tenantId, dueType: type })
       if (tempCol) {
         return res.json({ code: 200 });
       }
@@ -298,7 +298,7 @@ const getTempCollection = async (req, res) => {
     } else {
       const arr = await Promise.all(temp.map(async (unit) => {
         const obj = {
-          type: unit.type,
+          type: unit.dueType,
           amount: unit.amount,
           date: unit.date,
           mode: unit.mode,
