@@ -14,10 +14,31 @@ const collectionSchema = new mongoose.Schema(
       type: mongoose.Schema.Types.ObjectId,
       required: true,
     },
-    collections: {
-      type: [],
-      default: [],
+    dueType: {
+      type: String,
+      required: true,
     },
+    amount: {
+      type: String,
+      required: true,
+    },
+    date: {
+      type: String,
+      required: true,
+    },
+    mode: {
+      type: String,
+      required: true,
+    },
+    receiptId: {
+      type: String,
+      required: true,
+    },
+    openingDue: {
+      type: String,
+      required: true,
+    }
+
   },
   {
     timestamps: true,

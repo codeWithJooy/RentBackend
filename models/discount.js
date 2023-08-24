@@ -14,9 +14,17 @@ const discountSchema = new mongoose.Schema(
       type: mongoose.Schema.Types.ObjectId,
       required: true,
     },
-    discounts: {
-      type: [],
-      default: [],
+    dueType: {
+      type: String,
+      required: true,
+    },
+    amount: {
+      type: String,
+      required: true,
+    },
+    date: {
+      type: String,
+      required: true,
     },
   },
   {

@@ -14,7 +14,7 @@ const collectionSchema = new mongoose.Schema(
       type: mongoose.Schema.Types.ObjectId,
       required: true,
     },
-    type: {
+    dueType: {
       type: String,
       required: true,
     },

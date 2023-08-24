@@ -25,6 +25,10 @@ const propertySchema = new mongoose.Schema(
       type: String,
       trim: true,
     },
+    floors: {
+      type: String,
+      default: "0",
+    }
   },
   {
     timestamps: true,

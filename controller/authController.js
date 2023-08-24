@@ -23,6 +23,7 @@ const Signup = (req, res) => {
             code: 200,
             message: "Signup Successful",
             userId: newUser._id,
+            email:newUser.email,
           })
         )
         .catch((err) =>
@@ -65,8 +66,12 @@ const Login = (req, res) => {
             return res.json({
               code: 200,
               userId: property.userId,
+              email: user.email,
+              pincode: property.pincode,
+              contact:property.contact,
               propertyId: property._id,
               propertyName: property.name,
+              propertyCode:property.code,
             });
           }
         });

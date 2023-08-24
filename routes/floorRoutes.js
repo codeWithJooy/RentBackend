@@ -1,9 +1,9 @@
 const express = require("express");
 const router = express.Router();
-const setupControllers = require("../controller/setupController");
+const floorControllers = require("../controller/floorController");
 
-router.post("/addFloors", setupControllers.addFloor);
-router.post("/addRoom", setupControllers.addRoom);
-router.post("/getFloorPresent", setupControllers.getFloorPresent);
-router.get("/getFloors", setupControllers.getFloors);
+router.post("/addFloors", floorControllers.addFloors);
+router.post("/addRoom", floorControllers.addRoom);
+router.post("/getFloorPresent", floorControllers.getFloorPresent);
+router.get("/getFloors", floorControllers.getFloors);
 module.exports = router;

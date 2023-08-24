@@ -10,17 +10,17 @@ const floorSchema = new mongoose.Schema(
       type: mongoose.Schema.Types.ObjectId,
       required: true,
     },
-    floorPresent: {
+    name: {
+      type: String,
+      required: true
+    },
+    roomAdded: {
       type: Boolean,
       default: false,
     },
-    totalFloors: {
-      type: Number,
-      default: 0,
-    },
-    floors: {
-      type: [],
-      default: [],
+    roomsType: {
+      type: Object,
+      default: {},
     },
   },
   {
