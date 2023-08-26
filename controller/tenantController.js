@@ -5,6 +5,9 @@ const Discount = require("../models/discount");
 const Receipt = require("../models/receipt");
 const Rooms = require("../models/rooms");
 const Dues = require("../models/dues")
+const TenantPersonal = require("../models/tenantDetails/tenantPersonal")
+const TenantParents = require("../models/tenantDetails/tenantParents")
+const TenantGuardian = require("../models/tenantDetails/tenantGuardian");
 
 // const addTenant = (req, res) => {
 //   let {
@@ -278,6 +281,60 @@ const getTenantName = (req, res) => {
       return res.json({ code: 502, model: err.message });
     });
 };
+const getTenantDetails = async (req, res) => {
+  try {
+    const { userId, propertyId, tenantId } = req.query
+    let obj = {
+      name: "",
+      number: "",
+      alternate: "",
+      email: "",
+      birthDate: "",
+      bloodGroup: "",
+      dob: "",
+      fatherName: "",
+      fatherNumber: "",
+      motherName: "",
+      motherNumber: "",
+      occupation: "",
+      guardianName: "",
+      guardianNumber: "",
+      guardianAddress: ""
+    }
+
+    let tenant = await Tenant.findOne({ userId, propertyId, _id: tenantId }).exec()
+    if (tenant) {
+      obj.name = tenant.name
+      obj.number = tenant.number
+      obj.dob = tenant.dob
+    }
+    let tenantProfile = await TenantPersonal.findOne({ userId, propertyId, tenantId }).exec()
+    if (tenantProfile) {
+      obj.alternate = tenantProfile.alternate
+      obj.email = tenantProfile.email
+      obj.birthDate = tenantProfile.birthDate
+      obj.bloodGroup = tenantProfile.bloodGroup
+    }
+    let tenantParents = await TenantParents.findOne({ userId, propertyId, tenantId }).exec()
+    if (tenantParents) {
+      obj.fatherName = tenantParents.fatherName
+      obj.fatherNumber = tenantParents.fatherNumber
+      obj.motherName = tenantParents.motherName
+      obj.motherNumber = tenantParents.motherNumber
+      obj.occupation = tenantParents.occupation
+    }
+    let tenantGuardian = await TenantGuardian.findOne({ userId, propertyId, tenantId }).exec()
+    if (tenantGuardian) {
+      obj.guardianName = tenantGuardian.name
+      obj.guardianAddress = tenantGuardian.address
+      obj.guardianNumber = tenantGuardian.number
+    }
+    return res.json({ code: 200, model: obj })
+  }
+  catch (error) {
+    return res.json({ code: 502, msg: error.message })
+  }
+}
 module.exports = {
   getTenants,
   addTenant,
@@ -285,4 +342,5 @@ module.exports = {
   getTenantCount,
   getAllTenantsCount,
   getTenantName,
+  getTenantDetails,
 };
