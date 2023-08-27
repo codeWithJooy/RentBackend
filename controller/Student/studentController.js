@@ -52,7 +52,7 @@ const addStudent = (req, res) => {
     password,
   } = req.body;
 
-  Student.findOne({ number })
+  Student.findOne({ userId, propertyId, number })
     .then((student) => {
       if (student) {
         return res.json({ code: 409, model: "Tenant Already Present" });
