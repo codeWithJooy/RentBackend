@@ -13,7 +13,7 @@ const duesRoutes = require("./routes/dueRoutes");
 const summaryRoutes = require("./routes/summaryRoutes");
 const studentRoutes = require("./routes/Student/studentRoutes");
 const complaintRoutes = require("./routes/complaintRoutes")
-
+//test
 const app = express();
 app.use(express.json());
 app.use(cors());
