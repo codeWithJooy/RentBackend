@@ -1,1 +1,1 @@
-GET http://localhost:5000/api/food/getActivated?userId=6499b724858d17fd0932e019&propertyId=6499b87c7c3f6394938dde4a
+GET http://localhost:5000/api/food/getFood?userId=64e797addc87f3391ceeff33&propertyId=64e797ccdc87f3391ceeff36&today=Sunday
