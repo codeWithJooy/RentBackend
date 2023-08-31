@@ -8,6 +8,7 @@ const Dues = require("../models/dues")
 const TenantPersonal = require("../models/tenantDetails/tenantPersonal")
 const TenantParents = require("../models/tenantDetails/tenantParents")
 const TenantGuardian = require("../models/tenantDetails/tenantGuardian");
+const Student = require("../models/student")
 
 // const addTenant = (req, res) => {
 //   let {
@@ -335,6 +336,63 @@ const getTenantDetails = async (req, res) => {
     return res.json({ code: 502, msg: error.message })
   }
 }
+const getTenantsCredentials = async (req, res) => {
+  try {
+    const { userId, propertyId } = req.query
+    //Searching For Students Who Have Logged In Student App
+    const tenantList = await Student.find({ userId, propertyId }).exec()
+    let arr = []
+    if (tenantList) {
+      for (let i = 0; i < tenantList.length; i++) {
+        let obj = {}
+        obj.name = tenantList[i].name
+        obj.email = tenantList[i].email
+        obj.number = tenantList[i].number
+        obj.password = tenantList[i].password
+        obj.tenantId = tenantList[i].tenantId
+        const tenant = await Tenant.findOne({ userId, propertyId, _id: tenantList[i].tenantId }).exec()
+        if (tenant) {
+          const room = await Rooms.findOne({ userId, propertyId, _id: tenant.roomId })
+          if (room) {
+            obj.room = room.name
+          }
+          else {
+            obj.room = "Unknown"
+          }
+        }
+        else {
+          obj.room = "Unknown"
+        }
+        arr.push(obj)
+      }
+      return res.json({ code: 200, model: arr })
+    }
+    else {
+      return res.json({ code: 404, msg: "No Tenants Found" })
+    }
+  } catch (error) {
+    return res.json({ code: 502, msg: error.message })
+  }
+}
+
+const resetTenantPassword = async (req, res) => {
+  try {
+    const { userId, propertyId, tenantId, password } = req.query
+    let student = await Student.findOne({ userId, propertyId, tenantId }).exec()
+    if (student) {
+      student.password = password
+      student.markModified("password")
+      student.save()
+      return res.json({ code: 200, msg: "Tenant Password Reset Sucessfully" })
+    }
+    else {
+      return res.json({ code: 404, msg: "Error Find Tenant" })
+    }
+  }
+  catch (error) {
+    return res.json({ code: 502, msg: error.message })
+  }
+}
 module.exports = {
   getTenants,
   addTenant,
@@ -343,4 +401,6 @@ module.exports = {
   getAllTenantsCount,
   getTenantName,
   getTenantDetails,
+  getTenantsCredentials,
+  resetTenantPassword,
 };

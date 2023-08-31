@@ -9,4 +9,6 @@ router.get("/getTenantCount", tenantControllers.getTenantCount);
 router.get("/getAllTenantsCount", tenantControllers.getAllTenantsCount);
 router.get("/getTenantName", tenantControllers.getTenantName);
 router.get("/getTenantDetails", tenantControllers.getTenantDetails)
+router.get("/getTenantsCredential", tenantControllers.getTenantsCredentials)
+router.get("/resetTenantPassword", tenantControllers.resetTenantPassword);
 module.exports = router;
