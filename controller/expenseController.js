@@ -1,5 +1,6 @@
 const mongoose = require("mongoose");
 const Expense = require("../models/expense");
+const Member=require("../models/member")
 
 const addExpense = (req, res) => {
   const {
@@ -35,19 +36,42 @@ const addExpense = (req, res) => {
 };
 const getExpense = (req, res) => {
   const { userId, propertyId } = req.query;
-  Expense.findOne({ userId, propertyId })
+  Expense.find({ userId, propertyId }).exec()
     .then((doc) => {
       if (!doc) {
-        return res.json({ code: 404 });
+        return res.json({ code: 404,msg:"No Expense Found" });
       } else {
         return res.json({ code: 200, model: doc });
       }
     })
     .catch((err) => {
-      return res.json({ code: 502 });
+      return res.json({ code: 502 ,msg:err.message});
     });
 };
+const getMemberName=async(req,res)=>{
+  try{
+     const {userId,propertyId}=req.query
+     
+     let member=await Member.find({userId,propertyId}).exec()
+     let arr=[]
+     if(member){
+      console.log(member.length)
+      for(let i= 0;i<member.length;i++){
+         arr.push(member[i].personal.name)
+      }
+      return res.json({code:200,model:arr})
+     }
+     else{
+      return res.json({code:200,model:arr})
+     }
+     
+  }
+  catch(error){
+    return res.json({code:502,msg:error.message})
+  }
+}
 module.exports = {
   addExpense,
   getExpense,
+  getMemberName,
 };
