@@ -1,6 +1,6 @@
 const mongoose = require("mongoose")
 
-const hosting = new mongoose.Schema(
+const notificationSchema = new mongoose.Schema(
     {
         userId: {
             type: mongoose.Schema.Types.ObjectId,
@@ -14,28 +14,17 @@ const hosting = new mongoose.Schema(
             type: mongoose.Schema.Types.ObjectId,
             required: true,
         },
-        name: {
+        date: {
             type: String,
             required: true,
         },
-        phone: {
+        message: {
             type: String,
             required: true,
-        },
-        from: {
-            type: String,
-            required: true,
-        },
-        to: {
-            type: String,
-            required: true,
-        },
-        status: {
-            type: String,
-            default:"Pending",
         }
     }
+
 )
 
-const Hosting = mongoose.model("Hosting", hosting)
-module.exports = Hosting
+const StudentNotifications = mongoose.model("StudentNotifications", notificationSchema)
+module.exports = StudentNotifications
