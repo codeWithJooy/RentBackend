@@ -29,6 +29,10 @@ const notificationSchema = new mongoose.Schema(
         message: {
             type: String,
             required: true,
+        },
+        view:{
+            type:String,
+            default:"new"
         }
     }
 

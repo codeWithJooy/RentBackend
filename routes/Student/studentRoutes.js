@@ -12,6 +12,17 @@ router.get("/getStudentTotalDues", studentController.getStudentTotalDues)
 router.get("/getStudentTotalExpenses", studentController.getStudentTotalExpenses)
 router.get("/getStudentExpenses", studentController.getStudentExpenses)
 router.post("/addStudentLate",studentExtraController.addStudentLate)
-router.post("/addStudentHosting",studentExtraController.addStudentHosting)
 router.post("/addStudentEviction",studentExtraController.addStudentEviction)
+
+//Hosting Section
+router.post("/addStudentHosting",studentExtraController.addStudentHosting)
+router.get("/getHosting",studentExtraController.getHosting)
+router.put("/updateHosting",studentExtraController.updateHosting)
+
+//Student Notifications
+router.put("/updateStudentNotifications",studentExtraController.updateStudentNotifications)
+router.get("/getStudentNotifications",studentExtraController.getStudentNotifications)
+router.get("/getStudentNotificationsCount",studentExtraController.getStudentNotificationsCount)
+
+
 module.exports = router;
