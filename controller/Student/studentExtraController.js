@@ -10,9 +10,9 @@ const addStudentHosting = async (req, res) => {
         const { name,phone, from, to,presentDate } = req.body
         let message=`Request for Hosting ${name} from ${from} to ${to} send.`
         let present=Hosting.findOne({userId,propertyId,tenantId,status:"Pending"}).exec()
-        if(!present){
+        if(present && present.length !=1){
             let hosting=await new Hosting({userId,propertyId,tenantId,name,phone,from,to}).save()
-        let notification=await new StudentNotifications({userId,propertyId,tenantId,date:presentDate,message}).save()
+        let notification=await new StudentNotifications({userId,propertyId,tenantId,type:"Hosting A Frined",status:"Pending",date:presentDate,message}).save()
         return res.json({code:200,msg:"Request Send"})
         }
         else{
@@ -38,10 +38,10 @@ const addStudentEviction = async (req, res) => {
 const addStudentLate = async (req, res) => {
     try {
         const { userId, propertyId, tenantId } = req.query
-        const { date,time,presentDate } = req.body
-        let message=`Request for late arrival on ${date} by time ${time}`
-        let lete=new Late({userId,propertyId,tenantId,date,time}).save()
-        let notification=new StudentNotification({userId,propertyId,tenantId,date:presentDate,message})
+        const { reason,time,presentDate } = req.body
+        let message=`Request for late arrival due to ${reason} by  ${time} is pending`
+        let lete=new Late({userId,propertyId,tenantId,reason,time}).save()
+        let notification=new StudentNotifications({userId,propertyId,tenantId,type:"Late Arrival",status:"Pending",date:presentDate,message}).save()
         return res.json({code:200,msg:"Request Send"})
     }
     catch (error) {

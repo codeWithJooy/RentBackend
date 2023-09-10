@@ -14,13 +14,17 @@ const lateSchema = new mongoose.Schema(
             type: mongoose.Schema.Types.ObjectId,
             required: true,
         },
-        date: {
+        reason: {
             type: String,
             required: true,
         },
         time: {
             type: String,
             required: true,
+        },
+        status:{
+            type:String,
+            default:"Pending",
         }
     }
 
