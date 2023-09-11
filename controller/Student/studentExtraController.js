@@ -94,8 +94,9 @@ const getHosting = async (req, res) => {
         if (hosting && hosting.length > 0) {
             for (let i = 0; i < hosting.length; i++) {
                 let obj = {}
-                obj.name = await getTenantName(hosting[i].tenantId)
-                obj.room = await getTenantRoom(hosting[i].getTenantRoom)
+                let {name,roomId}=await getTenantName(hosting[i].tenantId)
+                obj.name = name
+                obj.room = await getTenantRoom(userId,propertyId,roomId)
                 obj.userId = userId
                 obj.propertyId = propertyId
                 obj.tenantId = hosting[i].tenantId
@@ -120,7 +121,7 @@ const updateHosting = async (req, res) => {
     try {
         const { userId, propertyId, tenantId, hostingId, status } = req.query
         const { name, from, to, presentDate } = req.body
-        let hosting = await Hosting.find({ _id: hostingId }).exec()
+        let hosting = await Hosting.findOne({ _id: hostingId })
         if (hosting) {
             hosting.status = status
             hosting.markModified("status")
