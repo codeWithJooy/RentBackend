@@ -31,7 +31,7 @@ const addCollection = async (req, res) => {
     let obj = { type, amount, date, mode, receiptId, openingDue };
     let discountObj = { type, amount: discount, date };
     let dueData = await Dues.findOne({ userId, propertyId, tenantId, dueType: type }).exec()
-    if (dueData) {
+    if (dueData && dueData.due-dueData.collections >=0) {
       dueData.due = parseInt(dueData.due) - parseInt(discount)
       dueData.collections = parseInt(dueData.collections) + parseInt(amount)
       dueData.discount = parseInt(dueData.discount) + parseInt(discount)

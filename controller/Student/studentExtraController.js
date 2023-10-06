@@ -94,9 +94,9 @@ const getHosting = async (req, res) => {
         if (hosting && hosting.length > 0) {
             for (let i = 0; i < hosting.length; i++) {
                 let obj = {}
-                let {name,roomId}=await getTenantName(hosting[i].tenantId)
+                let { name, roomId } = await getTenantName(hosting[i].tenantId)
                 obj.name = name
-                obj.room = await getTenantRoom(userId,propertyId,roomId)
+                obj.room = await getTenantRoom(userId, propertyId, roomId)
                 obj.userId = userId
                 obj.propertyId = propertyId
                 obj.tenantId = hosting[i].tenantId
@@ -161,12 +161,63 @@ const addStudentLate = async (req, res) => {
         return res.json({ code: 502, msg: error.message })
     }
 }
+const getLate = async (req, res) => {
+    try {
+        const { userId, propertyId } = req.query
+        let late = await Late.find({ userId, propertyId, status: "Pending" }).exec()
+        let arr = []
+        if (late && late.length > 0) {
+            for (let i = 0; i < late.length; i++) {
+                let obj = {}
+                let { name, roomId } = await getTenantName(late[i].tenantId)
+
+                obj.name = name
+                obj.room = await getTenantRoom(userId, propertyId, roomId)
+                obj.userId = userId
+                obj.propertyId = propertyId
+                obj.tenantId = late[i].tenantId
+                obj.reason = late[i].reason
+                obj.time = late[i].time
+                obj.lateId = late[i]._id
+                arr.push(obj)
+            }
+            return res.json({ code: 200, model: arr })
+        }
+        else {
+            return res.json({ code: 200, model: arr })
+        }
+
+    } catch (error) {
+        return res.json({ code: 502, msg: error.message })
+    }
+}
+const updateStudentLate = async (req, res) => {
+    try {
+        const { userId, propertyId, tenantId, lateId, status } = req.query
+        const { reason, time, presentDate } = req.body
+        let late = await Late.findOne({ _id: hostingId })
+        if (late) {
+            late.status = status
+            late.markModified("status")
+            late.save()
+            let message = `Request for late arrival due to ${reason} by  ${time} is updated`
+            let notification = await new StudentNotifications({ userId, propertyId, tenantId, type: "Hosting A Frined", status, date: presentDate, message }).save()
+            return res.json({ code: 200, msg: "Late Arrival Status Updated" })
+        }
+
+    }
+    catch (error) {
+        return res.json({ code: 502, msg: error.messsage })
+    }
+}
 module.exports = {
     addStudentHosting,
     getHosting,
     updateHosting,
     addStudentEviction,
     addStudentLate,
+    getLate,
+    updateStudentLate,
     getStudentNotifications,
     getStudentNotificationsCount,
     updateStudentNotifications,
