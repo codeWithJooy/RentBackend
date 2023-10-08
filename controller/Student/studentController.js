@@ -147,6 +147,7 @@ const addPendingCollection = async (req, res) => {
   try {
     const { userId, propertyId, tenantId, dueType, due, amount, date, mode } = req.body;
     let duesData = await Dues.findOne({ userId, propertyId, tenantId, dueType }).exec()
+    //Check if Due is added and status is pending and difference between due and collection = due
     if (duesData && duesData.status != 'pending' && parseInt(duesData.due) - parseInt(duesData.collections) == due) {
       duesData.status = "pending"
       duesData.markModified("status")

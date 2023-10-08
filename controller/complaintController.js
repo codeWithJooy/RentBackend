@@ -18,7 +18,7 @@ const getComplaints = async (req, res) => {
     try {
       const complaints = await Complaint.find({ userId, propertyId }).exec();
       if (!complaints || complaints.length === 0) {
-        return res.json({ code: 404, model: "No Complaint Found" });
+        return res.json({ code: 200, model: []});
       } else {
         const arr = await Promise.all(complaints.map(async (complaint) => {
           const obj = {
