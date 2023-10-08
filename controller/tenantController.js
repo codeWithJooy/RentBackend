@@ -9,7 +9,14 @@ const TenantPersonal = require("../models/tenantDetails/tenantPersonal")
 const TenantParents = require("../models/tenantDetails/tenantParents")
 const TenantGuardian = require("../models/tenantDetails/tenantGuardian");
 const Student = require("../models/student")
+const twilio = require('twilio')
 
+// Your Twilio Account SID and Auth Token
+const accountSid = 'AC567d9e3d06e75d2cca3eb582fa7e8da5';
+const authToken = 'b7591c1c58d41f232cc6d56b7fc64fa8';
+
+// Create a Twilio client
+const client = new twilio(accountSid, authToken);
 // const addTenant = (req, res) => {
 //   let {
 //     userId,
@@ -393,6 +400,41 @@ const resetTenantPassword = async (req, res) => {
     return res.json({ code: 502, msg: error.message })
   }
 }
+const remindTenant = async (req, res) => {
+  try {
+    const { userId, propertyId, propertyName, tenantId, type, due, dueDate } = req.body
+    let tenant = await Tenant.findOne({ _id: tenantId })
+    if (tenant) {
+      let name = tenant.name
+      let number = tenant.number
+      const fromNumber = 'whatsapp:+14155238886'; // Your Twilio WhatsApp number
+      const toNumber = `whatsapp:+91${number}`; // The recipient's WhatsApp number
+      let msg = `Hey ${name}, 
+               
+      You Have a Due Pending.PLease Pay it to avoid any late fees.
+               
+      Regards ${propertyName}`
+      client.messages
+        .create({
+          from: fromNumber,
+          to: toNumber,
+          body: msg,
+        }).then((message) => {
+          console.log(`Message sent: ${message.sid}`);
+        }).catch((error) => {
+          console.error('Error sending message:', error);
+        });
+    }
+    else{
+      console.log("Not Working")
+    }
+  }
+  catch (error) {
+    console.log(error.message)
+    return res.json({ code: 502, msg: error.messsage })
+  }
+}
+
 module.exports = {
   getTenants,
   addTenant,
@@ -403,4 +445,5 @@ module.exports = {
   getTenantDetails,
   getTenantsCredentials,
   resetTenantPassword,
+  remindTenant,
 };
