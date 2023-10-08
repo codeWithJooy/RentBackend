@@ -22,7 +22,7 @@ router.put("/updateHosting",studentExtraController.updateHosting)
 //Late Section
 router.post("/addStudentLate",studentExtraController.addStudentLate)
 router.get("/getLate",studentExtraController.getLate)
-router.put("/updateStudentLate",studentExtraController.updateStudentLate)
+router.post("/updateStudentLate",studentExtraController.updateStudentLate)
 
 //Student Notifications
 router.put("/updateStudentNotifications",studentExtraController.updateStudentNotifications)

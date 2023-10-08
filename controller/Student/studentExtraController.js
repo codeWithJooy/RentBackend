@@ -195,14 +195,18 @@ const updateStudentLate = async (req, res) => {
     try {
         const { userId, propertyId, tenantId, lateId, status } = req.query
         const { reason, time, presentDate } = req.body
-        let late = await Late.findOne({ _id: hostingId })
+        let late = await Late.findOne({ _id: lateId })
         if (late) {
             late.status = status
             late.markModified("status")
             late.save()
             let message = `Request for late arrival due to ${reason} by  ${time} is updated`
-            let notification = await new StudentNotifications({ userId, propertyId, tenantId, type: "Hosting A Frined", status, date: presentDate, message }).save()
+            let notification = await new StudentNotifications({ userId, propertyId, tenantId, type: "Late Arrival ", status, date: presentDate, message })
+            await notification.save()
             return res.json({ code: 200, msg: "Late Arrival Status Updated" })
+        }
+        else{
+            return res.json({ code: 200, msg: "Something Went Wrong" })
         }
 
     }
