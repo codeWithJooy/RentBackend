@@ -3,6 +3,7 @@ const router = express.Router();
 const tenantControllers = require("../controller/tenantController");
 
 router.get("/getTenants", tenantControllers.getTenants);
+router.get("/getTenantsRoomwise",tenantControllers.getTenantRoomWise);
 router.post("/addTenant", tenantControllers.addTenant);
 router.get("/getATenant", tenantControllers.getATenant);
 router.get("/getTenantCount", tenantControllers.getTenantCount);
