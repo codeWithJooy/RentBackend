@@ -158,7 +158,7 @@ const updatePassword = async (req, res) => {
       return res.json({ code: 200, msg: "Password Changed Successfully" })
     }
   } catch (error) {
-    return res.json({ code: 502, msg: error.message })
+    return res.json({ code: 502, msg: "Something Went Wrong " })
   }
 }
 module.exports = {
