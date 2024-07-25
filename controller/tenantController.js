@@ -241,7 +241,7 @@ const getTenantRoomWise = (req, res) => {
         return res.json({ code: 404, msg: "No Tennant Present" });
       }
       let arr = [];
-      for (let i = o; i < docs.length; i++) {
+      for (let i = 0; i < docs.length; i++) {
         let obj = {};
         obj._id = docs[i]._id;
         obj.userId = docs[i].userId;
