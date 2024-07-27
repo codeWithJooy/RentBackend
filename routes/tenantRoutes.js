@@ -13,4 +13,6 @@ router.get("/getTenantDetails", tenantControllers.getTenantDetails)
 router.get("/getTenantsCredential", tenantControllers.getTenantsCredentials)
 router.get("/resetTenantPassword", tenantControllers.resetTenantPassword);
 router.post("/remindTenant",tenantControllers.remindTenant)
+router.post("/updateTenant",tenantControllers.updateTenant)
+
 module.exports = router;

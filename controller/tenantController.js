@@ -488,7 +488,93 @@ const remindTenant = async (req, res) => {
     return res.json({ code: 502, msg: error.messsage });
   }
 };
+const updateTenant = async (req, res) => {
+  const {
+    alternate,
+    birthDate,
+    bloodGroup,
+    fatherName,
+    fatherNumber,
+    motherName,
+    motherNumber,
+    occupation,
+    guardianName,
+    guardianNumber,
+    guardianAddress,
+  } = req.body;
 
+  const { userId, propertyId, tenantId } = req.query;
+  try {
+    const personalData = {
+      userId,
+      propertyId,
+      tenantId,
+      alternateNumber: alternate,
+      birthDate,
+      bloodGroup,
+    };
+
+    const parentData = {
+      userId,
+      propertyId,
+      tenantId,
+      fatherName,
+      fatherNumber,
+      motherName,
+      motherNumber,
+      occupation,
+    };
+
+    const guardianData = {
+      userId,
+      propertyId,
+      tenantId,
+      name: guardianName,
+      number: guardianNumber,
+      address: guardianAddress,
+    };
+
+    // Check if documents exist and update or insert accordingly
+    const personalDoc = await TenantPersonal.findOne({
+      userId,
+      propertyId,
+      tenantId,
+    });
+    if (personalDoc) {
+      await TenantPersonal.updateOne({ _id: personalDoc._id }, personalData);
+    } else {
+      await new TenantPersonal(personalData).save();
+    }
+
+    const parentDoc = await TenantParents.findOne({
+      userId,
+      propertyId,
+      tenantId,
+    });
+    if (parentDoc) {
+      await TenantParents.updateOne({ _id: parentDoc._id }, parentData);
+    } else {
+      await new TenantParents(parentData).save();
+    }
+
+    const guardianDoc = await TenantGuardian.findOne({
+      userId,
+      propertyId,
+      tenantId,
+    });
+    if (guardianDoc) {
+      await TenantGuardian.updateOne({ _id: guardianDoc._id }, guardianData);
+    } else {
+      await new TenantGuardian(guardianData).save();
+    }
+
+    res.status(200).json({ message: "Tenant data added/updated successfully" });
+  } catch (error) {
+    res
+      .status(500)
+      .json({ message: "Error adding/updating tenant data", error });
+  }
+};
 module.exports = {
   getTenants,
   getTenantRoomWise,
@@ -501,4 +587,5 @@ module.exports = {
   getTenantsCredentials,
   resetTenantPassword,
   remindTenant,
+  updateTenant,
 };
