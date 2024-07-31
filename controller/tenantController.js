@@ -8,6 +8,8 @@ const Dues = require("../models/dues");
 const TenantPersonal = require("../models/tenantDetails/tenantPersonal");
 const TenantParents = require("../models/tenantDetails/tenantParents");
 const TenantGuardian = require("../models/tenantDetails/tenantGuardian");
+const TenantDocument = require("../models/tenantDetails/tenantDocuments");
+const s3 = require("../config/awsconfig");
 const Student = require("../models/student");
 const twilio = require("twilio");
 
@@ -575,6 +577,66 @@ const updateTenant = async (req, res) => {
       .json({ message: "Error adding/updating tenant data", error });
   }
 };
+const tenantDocument = async (req, res) => {
+  const { userId, propertyId, tenantId, docType } = req.body;
+  const file = req.file;
+
+  // S3 Upload
+  const params = {
+    Bucket: process.env.S3_BUCKET_NAME,
+    Key: `${Date.now()}_${file.originalname}`,
+    Body: file.buffer,
+    ContentType: file.mimetype,
+  };
+
+  s3.upload(params, async (err, data) => {
+    if (err) {
+      return res.status(500).send(err);
+    }
+    const tenantDoc = await TenantDocument.findOne({
+      userId,
+      propertyId,
+      tenantId,
+      docType,
+    });
+    if (tenantDoc) {
+      await TenantDocument.updateOne(
+        { _id: tenantDoc._id },
+        { image: data.Location }
+      );
+    } else {
+      await new TenantDocument({
+        userId,
+        propertyId,
+        tenantId,
+        docType,
+        image: data.Location,
+      }).save();
+    }
+    return res.send({ code: 200, url: data.Location });
+  });
+};
+const getTenantDocument = async (req, res) => {
+  try {
+    const { userId, propertyId, tenantId, docType } = req.query;
+    let failedUrl =
+      "https://roomeasefinal.s3.eu-north-1.amazonaws.com/document.png";
+    let data = await TenantDocument.findOne({
+      userId,
+      propertyId,
+      tenantId,
+      docType,
+    });
+    if (data) {
+      return res.send({ code: 200, url: data.image });
+    } else {
+      return res.send({ code: 200, url: failedUrl });
+    }
+  } catch (error) {
+    console.log("Error is ", error.message);
+    return res.status(500).send({ code: 500, msg: error.message });
+  }
+};
 module.exports = {
   getTenants,
   getTenantRoomWise,
@@ -588,4 +650,6 @@ module.exports = {
   resetTenantPassword,
   remindTenant,
   updateTenant,
+  tenantDocument,
+  getTenantDocument,
 };

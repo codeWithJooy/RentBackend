@@ -15,8 +15,10 @@ const studentRoutes = require("./routes/Student/studentRoutes");
 const complaintRoutes = require("./routes/complaintRoutes")
 //test
 const app = express();
-app.use(express.json());
 app.use(cors());
+app.use(express.json({ limit: '50mb' })); // Increase the limit as needed
+app.use(express.urlencoded({ limit: '50mb', extended: true })); // For URL-encoded data
+
 app.use("/api/auth", authRoutes);
 app.use("/api/setup", setupRoutes);
 app.use("/api/floor", floorRoutes);
