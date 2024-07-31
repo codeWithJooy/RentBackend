@@ -1,5 +1,6 @@
 const express = require("express");
 const router = express.Router();
+const upload = require('../config/multerConfig');
 const tenantControllers = require("../controller/tenantController");
 
 router.get("/getTenants", tenantControllers.getTenants);
@@ -14,5 +15,6 @@ router.get("/getTenantsCredential", tenantControllers.getTenantsCredentials)
 router.get("/resetTenantPassword", tenantControllers.resetTenantPassword);
 router.post("/remindTenant",tenantControllers.remindTenant)
 router.post("/updateTenant",tenantControllers.updateTenant)
-
+router.post('/addDocument', upload.single('file'), tenantControllers.tenantDocument)
+router.get("/getDocument",tenantControllers.getTenantDocument)
 module.exports = router;
