@@ -343,6 +343,8 @@ const getTenantDetails = async (req, res) => {
       guardianName: "",
       guardianNumber: "",
       guardianAddress: "",
+      remarks:"",
+      address:"",
     };
 
     let tenant = await Tenant.findOne({
@@ -365,6 +367,8 @@ const getTenantDetails = async (req, res) => {
       obj.email = tenantProfile.email;
       obj.birthDate = tenantProfile.birthDate;
       obj.bloodGroup = tenantProfile.bloodGroup;
+      obj.remarks=tenantProfile.remarks;
+      obj.address=tenantProfile.address;
     }
     let tenantParents = await TenantParents.findOne({
       userId,
@@ -503,6 +507,9 @@ const updateTenant = async (req, res) => {
     guardianName,
     guardianNumber,
     guardianAddress,
+    address,
+    remarks,
+    roomId,
   } = req.body;
 
   const { userId, propertyId, tenantId } = req.query;
@@ -514,6 +521,8 @@ const updateTenant = async (req, res) => {
       alternateNumber: alternate,
       birthDate,
       bloodGroup,
+      remarks,
+      address,
     };
 
     const parentData = {
@@ -536,7 +545,22 @@ const updateTenant = async (req, res) => {
       address: guardianAddress,
     };
 
+    const tenantData={
+      roomId,
+    }
+
     // Check if documents exist and update or insert accordingly
+    const tenantDoc=await Tenant.findOne({
+      userId,
+      propertyId,
+      _id:tenantId,
+    });
+    if(tenantDoc){
+      await Tenant.updateOne(
+        {_id:tenantDoc._id},
+        {$set:{roomId:tenantData.roomId}}
+      );
+    }
     const personalDoc = await TenantPersonal.findOne({
       userId,
       propertyId,
@@ -570,7 +594,7 @@ const updateTenant = async (req, res) => {
       await new TenantGuardian(guardianData).save();
     }
 
-    res.status(200).json({ message: "Tenant data added/updated successfully" });
+    res.status(200).json({ code:200,message: "Tenant data added/updated successfully" });
   } catch (error) {
     res
       .status(500)

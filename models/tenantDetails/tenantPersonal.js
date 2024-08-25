@@ -22,6 +22,14 @@ const personalSchema = new mongoose.Schema(
         },
         bloodGroup: {
             type: String,
+        },
+        remarks:{
+            type:String,
+            default:"",
+        },
+        address:{
+            type:String,
+            default:"",
         }
     },
     {
