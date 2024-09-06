@@ -1,0 +1,10 @@
+POST http://localhost:5000/api/contacts/addContact
+Content-Type: application/json
+
+{
+    "userId": "66b653631ca7d312dd6ff5fe",
+    "propertyId": "66b653631ca7d312dd6ff5fe",
+    "contactType": "Plumber",
+    "contactName": "Abhishek Hazra",
+    "contactNumber": "7980651358"
+}

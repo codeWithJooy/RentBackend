@@ -1,0 +1,1 @@
+GET  http://localhost:5000/api/contacts/getContacts?userId=66b653631ca7d312dd6ff5fe&propertyId=66b653631ca7d312dd6ff5fe

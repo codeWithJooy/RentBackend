@@ -13,6 +13,7 @@ const duesRoutes = require("./routes/dueRoutes");
 const summaryRoutes = require("./routes/summaryRoutes");
 const studentRoutes = require("./routes/Student/studentRoutes");
 const complaintRoutes = require("./routes/complaintRoutes")
+const contactsRoutes=require("./routes/contactsRoutes")
 //test
 const app = express();
 app.use(cors());
@@ -32,5 +33,6 @@ app.use("/api/dues", duesRoutes);
 app.use("/api/summary", summaryRoutes);
 app.use("/api/student", studentRoutes);
 app.use("/api/complaint", complaintRoutes)
+app.use("/api/contacts",contactsRoutes)
 
 module.exports = app;
