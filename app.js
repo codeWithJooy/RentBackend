@@ -14,6 +14,7 @@ const summaryRoutes = require("./routes/summaryRoutes");
 const studentRoutes = require("./routes/Student/studentRoutes");
 const complaintRoutes = require("./routes/complaintRoutes")
 const contactsRoutes=require("./routes/contactsRoutes")
+const cronRoutes=require("./routes/cron")
 //test
 const app = express();
 app.use(cors());
@@ -34,5 +35,6 @@ app.use("/api/summary", summaryRoutes);
 app.use("/api/student", studentRoutes);
 app.use("/api/complaint", complaintRoutes)
 app.use("/api/contacts",contactsRoutes)
+app.use("/api/cron",cronRoutes)
 
 module.exports = app;
